@@ -246,7 +246,7 @@ class _TotalIncomeState extends State<TotalIncome> {
                       borderRadius: BorderRadius.circular(50),
                       color: Color(0xFF1e42f9)),
                   child: Text(
-                    "Add Expense",
+                    "Add Income",
                     style: TextStyle(
                       color: Color(0xffffffff),
                       fontWeight: FontWeight.bold,
