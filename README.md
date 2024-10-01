@@ -21,8 +21,10 @@ App quản lí tài chính mục đích muốn hướng tới giúp người dù
 Bước 1: Clone URL link git.
 Bước 2: Tạo tài khoản Firebase và thiết lập app android và ios.
 bước 3: Kết nối csdl của tài khoản với firebase_option.dart
+
 ![image](https://github.com/user-attachments/assets/98193677-4804-4fbe-8f15-953227effb02)
 
 ![image](https://github.com/user-attachments/assets/384e4d1d-1fe5-482a-978c-ae30b6d97c85)
+
 Bước 4: Tải những thứ cần thiết như môi trường hoặc phiên bản của từng tools để sử dụng.
 Chúc bạn thành công!
