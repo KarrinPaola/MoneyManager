@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1062347283966",
+    "project_id": "money-tracker-back-up",
+    "storage_bucket": "money-tracker-back-up.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1062347283966:android:d97a95369b3a3d697634af",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCs0FxdfdVKGdiEaAbiWN26AHB7P9JiIg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
