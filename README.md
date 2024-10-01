@@ -28,3 +28,8 @@ bước 3: Kết nối csdl của tài khoản với firebase_option.dart
 
 Bước 4: Tải những thứ cần thiết như môi trường hoặc phiên bản của từng tools để sử dụng.
 Chúc bạn thành công!
+
+Các bước kết nối firebase cơ bản cho người dùng mới:
++ https://firebase.google.com/docs/flutter/setup?hl=vi&platform=android
+link Firebase:
++ https://console.firebase.google.com/u/3/
