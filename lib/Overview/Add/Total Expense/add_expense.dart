@@ -41,21 +41,21 @@ class _AddExpenseState extends State<AddExpense> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFedeff1),
+      backgroundColor: const Color(0xFFedeff1),
       appBar: AppBar(
       
-        backgroundColor: Color(0xffffffff),
-        title: Text('Add Expense', style: TextStyle(
+        backgroundColor: const Color(0xffffffff),
+        title: const Text('Add Expense', style: TextStyle(
           fontWeight: FontWeight.bold,
         ),),
       ),
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.all(25),
-            padding: EdgeInsets.all(10),
+            margin: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Color(0xFFFFFFFF),
+              color: const Color(0xFFFFFFFF),
               borderRadius: BorderRadius.circular(30),
             ),
             child: TableCalendar(
@@ -81,22 +81,22 @@ class _AddExpenseState extends State<AddExpense> {
                     border: Border.all(color: Colors.black), // Thêm border
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.chevron_left, color: Colors.black),
+                  child: const Icon(Icons.chevron_left, color: Colors.black),
                 ),
                 rightChevronIcon: Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black), // Thêm border
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.chevron_right, color: Colors.black),
+                  child: const Icon(Icons.chevron_right, color: Colors.black),
                 ),
               ),
               daysOfWeekStyle: DaysOfWeekStyle(
                 dowTextFormatter: (date, locale) {
                   return DateFormat.E(locale).format(date).substring(0, 2);
                 },
-                weekdayStyle: TextStyle(color: Colors.black),
-                weekendStyle: TextStyle(color: Colors.red),
+                weekdayStyle: const TextStyle(color: Colors.black),
+                weekendStyle: const TextStyle(color: Colors.red),
               ),
               calendarStyle: const CalendarStyle(
                 selectedDecoration: BoxDecoration(
@@ -111,11 +111,11 @@ class _AddExpenseState extends State<AddExpense> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 25),
+          const Padding(
+            padding: EdgeInsets.only(left: 25),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -130,7 +130,7 @@ class _AddExpenseState extends State<AddExpense> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           MyTextField(
@@ -138,11 +138,11 @@ class _AddExpenseState extends State<AddExpense> {
             obscureText: false,
             controller: titleController,
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 25),
+          const Padding(
+            padding: EdgeInsets.only(left: 25),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -157,7 +157,7 @@ class _AddExpenseState extends State<AddExpense> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           MyTextField(
@@ -166,11 +166,11 @@ class _AddExpenseState extends State<AddExpense> {
             obscureText: false,
             controller: moneyController,
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 25),
+          const Padding(
+            padding: EdgeInsets.only(left: 25),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -185,7 +185,7 @@ class _AddExpenseState extends State<AddExpense> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           FutureBuilder<List<String>>(

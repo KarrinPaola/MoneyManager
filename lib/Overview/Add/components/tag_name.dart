@@ -19,10 +19,10 @@ class TagName extends StatelessWidget {
     return GestureDetector(
       onTap: ontap,
       child: Container(
-        padding: EdgeInsets.all(15),
-        margin: EdgeInsets.all(5),
+        padding: const EdgeInsets.all(15),
+        margin: const EdgeInsets.all(5),
         decoration: BoxDecoration(
-          color: isSelected ? Color(0xFF1e42f9) : Color(0xffffffff),
+          color: isSelected ? const Color(0xFF1e42f9) : const Color(0xffffffff),
           borderRadius: BorderRadius.circular(15),
           boxShadow: [ BoxShadow(
                 color: Colors.grey.withOpacity(0.2), // Shadow color with opacity
@@ -34,7 +34,7 @@ class TagName extends StatelessWidget {
         child: Text(
           title,
           style: TextStyle(
-            color: isSelected ? Color(0xffffffff) : Color(0xff000000),
+            color: isSelected ? const Color(0xffffffff) : const Color(0xff000000),
             fontSize: 15,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal
           ),

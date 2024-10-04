@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import '../../../Login_SignUp/componets/my_textField.dart';
 import '../components/tag_name.dart';
 
-
 class AddIncome extends StatefulWidget {
   const AddIncome({super.key});
 
@@ -27,6 +26,8 @@ class _AddIncomeState extends State<AddIncome> {
 
   int _selectedTagIndex = -1; // Chỉ số của tag được chọn (khởi tạo là -1)
 
+  String tagNameSelected = "";
+
   // Hàm xử lý khi tag được nhấn
   void _onTagTap(int index) {
     setState(() {
@@ -36,26 +37,27 @@ class _AddIncomeState extends State<AddIncome> {
 
   Future<List<String>> fetchTagsFromDatabase() async {
     // Trả về danh sách tag
-    return [ 'Salary', 'Rewards', 'Money extra', 'Food', 'Go'];
+    return ['Salary', 'Rewards', 'Money extra', 'Food', 'Go'];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFedeff1),
+      backgroundColor: const Color(0xFFedeff1),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text('Add Income', style: TextStyle(
-          fontWeight: FontWeight.bold
-        ),),
+        title: const Text(
+          'Add Income',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.all(25),
-            padding: EdgeInsets.all(10),
+            margin: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Color(0xFFFFFFFF),
+              color: const Color(0xFFFFFFFF),
               borderRadius: BorderRadius.circular(30),
             ),
             child: TableCalendar(
@@ -81,22 +83,22 @@ class _AddIncomeState extends State<AddIncome> {
                     border: Border.all(color: Colors.black), // Thêm border
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.chevron_left, color: Colors.black),
+                  child: const Icon(Icons.chevron_left, color: Colors.black),
                 ),
                 rightChevronIcon: Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black), // Thêm border
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.chevron_right, color: Colors.black),
+                  child: const Icon(Icons.chevron_right, color: Colors.black),
                 ),
               ),
               daysOfWeekStyle: DaysOfWeekStyle(
                 dowTextFormatter: (date, locale) {
                   return DateFormat.E(locale).format(date).substring(0, 2);
                 },
-                weekdayStyle: TextStyle(color: Colors.black),
-                weekendStyle: TextStyle(color: Colors.red),
+                weekdayStyle: const TextStyle(color: Colors.black),
+                weekendStyle: const TextStyle(color: Colors.red),
               ),
               calendarStyle: const CalendarStyle(
                 selectedDecoration: BoxDecoration(
@@ -111,11 +113,11 @@ class _AddIncomeState extends State<AddIncome> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 25),
+          const Padding(
+            padding: EdgeInsets.only(left: 25),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -130,7 +132,7 @@ class _AddIncomeState extends State<AddIncome> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           MyTextField(
@@ -138,11 +140,11 @@ class _AddIncomeState extends State<AddIncome> {
             obscureText: false,
             controller: titleController,
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 25),
+          const Padding(
+            padding: EdgeInsets.only(left: 25),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -157,7 +159,7 @@ class _AddIncomeState extends State<AddIncome> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           MyTextField(
@@ -166,11 +168,11 @@ class _AddIncomeState extends State<AddIncome> {
             obscureText: false,
             controller: moneyController,
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 25),
+          const Padding(
+            padding: EdgeInsets.only(left: 25),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -185,7 +187,7 @@ class _AddIncomeState extends State<AddIncome> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           FutureBuilder<List<String>>(
@@ -210,8 +212,16 @@ class _AddIncomeState extends State<AddIncome> {
                   children: List.generate(tags.length, (index) {
                     return TagName(
                       title: tags[index],
-                      isSelected: _selectedTagIndex == index, // Chỉ định trạng thái selected
-                      ontap: () => _onTagTap(index), // Xử lý khi nhấn vào tag
+                      isSelected: _selectedTagIndex ==
+                          index, // Chỉ định trạng thái selected
+                      ontap: () {
+                        setState(() {
+                          _selectedTagIndex = index;
+                          tagNameSelected =
+                              tags[index]; // Lưu tên của tag được chọn
+                          print(tagNameSelected);
+                        });
+                      },
                     );
                   }),
                 ),
@@ -220,6 +230,38 @@ class _AddIncomeState extends State<AddIncome> {
           )
         ],
       ),
+      bottomNavigationBar: Container(
+          padding: const EdgeInsets.only(bottom: 30, top: 20, ),
+          decoration: const BoxDecoration(
+              color: Color(0xffffffff),
+              border: Border(
+                  top: BorderSide(
+                color: Color(0xFFedeff1),
+                width: 1,
+              ))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: (){},
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 015),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: const Color(0xFF1e42f9)),
+                  child: const Text(
+                    "Confirm",
+                    style: TextStyle(
+                      color: Color(0xffffffff),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        )
     );
   }
 }

@@ -17,7 +17,7 @@ class _TotalIncomeState extends State<TotalIncome> {
   DateTime? _selectedDay;
 
   // Data for different days' spends
-  Map<String, List<Map<String, String>>> _spendsData = {
+  final Map<String, List<Map<String, String>>> _spendsData = {
     '2024-10-01': [
       {'title': 'Food', 'amount': '+ \$20 + VAT 0.5%', 'method': 'Google Pay'},
       {'title': 'Coffee', 'amount': '+ \$5 + Vat 0.2%', 'method': 'Cash'},
@@ -54,7 +54,7 @@ class _TotalIncomeState extends State<TotalIncome> {
     print("Navigating to Total Expense");
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AddIncome()),
+      MaterialPageRoute(builder: (context) => const AddIncome()),
     );
   }
 
@@ -73,18 +73,18 @@ class _TotalIncomeState extends State<TotalIncome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xFFedeff1),
+        backgroundColor: const Color(0xFFedeff1),
         appBar: AppBar(
-          backgroundColor: Color(0xffffffff),
-          title: Text('Total Income'),
+          backgroundColor: const Color(0xffffffff),
+          title: const Text('Total Income'),
         ),
         body: Column(
           children: [
             Container(
-              margin: EdgeInsets.all(25),
-              padding: EdgeInsets.all(10),
+              margin: const EdgeInsets.all(25),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Color(0xFFFFFFFF),
+                color: const Color(0xFFFFFFFF),
                 borderRadius: BorderRadius.circular(30),
               ),
               child: TableCalendar(
@@ -110,22 +110,22 @@ class _TotalIncomeState extends State<TotalIncome> {
                       border: Border.all(color: Colors.black), // Thêm border
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(Icons.chevron_left, color: Colors.black),
+                    child: const Icon(Icons.chevron_left, color: Colors.black),
                   ),
                   rightChevronIcon: Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.black), // Thêm border
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(Icons.chevron_right, color: Colors.black),
+                    child: const Icon(Icons.chevron_right, color: Colors.black),
                   ),
                 ),
                 daysOfWeekStyle: DaysOfWeekStyle(
                   dowTextFormatter: (date, locale) {
                     return DateFormat.E(locale).format(date).substring(0, 2);
                   },
-                  weekdayStyle: TextStyle(color: Colors.black),
-                  weekendStyle: TextStyle(color: Colors.red),
+                  weekdayStyle: const TextStyle(color: Colors.black),
+                  weekendStyle: const TextStyle(color: Colors.red),
                 ),
                 calendarStyle: const CalendarStyle(
                   selectedDecoration: BoxDecoration(
@@ -140,27 +140,27 @@ class _TotalIncomeState extends State<TotalIncome> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Container(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(99),
-                  color: Color(0xFF1e42f9)),
+                  color: const Color(0xFF1e42f9)),
               child: Text(
                 '\$${_loadTotalExpense()}',
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
-            Text(
+            const Text(
               'You try so hard to make this money.\n Keep going!',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -169,13 +169,13 @@ class _TotalIncomeState extends State<TotalIncome> {
                 color: Color(0xff000000),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Expanded(
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: const BoxDecoration(
                     color: Color(0xffffffff),
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
@@ -185,7 +185,7 @@ class _TotalIncomeState extends State<TotalIncome> {
                   child: Column(
                     children: [
                       // Tab Bar
-                      TabBar(
+                      const TabBar(
                         labelColor: Color(0xFF1e42f9),
                         unselectedLabelColor: Colors.grey,
                         indicatorColor: Color(0xFF1e42f9),
@@ -201,7 +201,7 @@ class _TotalIncomeState extends State<TotalIncome> {
                             // Spends Tab with a ListView
                             _spendItems.isNotEmpty
                                 ? ListView.builder(
-                                    padding: EdgeInsets.all(16),
+                                    padding: const EdgeInsets.all(16),
                                     itemCount: _spendItems.length,
                                     itemBuilder: (context, index) {
                                       return buildSpendItem(
@@ -213,9 +213,9 @@ class _TotalIncomeState extends State<TotalIncome> {
                                       );
                                     },
                                   )
-                                : Center(child: Text('No spends for this day')),
+                                : const Center(child: Text('No spends for this day')),
                             // Categories Tab (Placeholder)
-                            Center(child: Text('No Categories available')),
+                            const Center(child: Text('No Categories available')),
                           ],
                         ),
                       ),
@@ -227,8 +227,8 @@ class _TotalIncomeState extends State<TotalIncome> {
           ],
         ),
         bottomNavigationBar: Container(
-          padding: const EdgeInsets.only(bottom: 30, top: 10),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.only(bottom: 30, top: 20),
+          decoration: const BoxDecoration(
               color: Color(0xffffffff),
               border: Border(
                   top: BorderSide(
@@ -241,11 +241,11 @@ class _TotalIncomeState extends State<TotalIncome> {
               GestureDetector(
                 onTap: goToAddExpense,
                 child: Container(
-                  padding: EdgeInsets.all(10),
+                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 015),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50),
-                      color: Color(0xFF1e42f9)),
-                  child: Text(
+                      color: const Color(0xFF1e42f9)),
+                  child: const Text(
                     "Add Income",
                     style: TextStyle(
                       color: Color(0xffffffff),
@@ -257,7 +257,8 @@ class _TotalIncomeState extends State<TotalIncome> {
               )
             ],
           ),
-        ));
+        )
+      );
   }
 
   Widget buildSpendItem(
@@ -269,26 +270,26 @@ class _TotalIncomeState extends State<TotalIncome> {
           CircleAvatar(
             radius: 20,
             backgroundColor: Colors.grey[200],
-            child: Icon(Icons.shopping_bag, color: Color(0xFF000000)),
+            child: const Icon(Icons.shopping_bag, color: Color(0xFF000000)),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(title,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              SizedBox(height: 4),
-              Text(date, style: TextStyle(fontSize: 14, color: Colors.grey)),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text(date, style: const TextStyle(fontSize: 14, color: Colors.grey)),
             ],
           ),
-          Spacer(),
+          const Spacer(),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(amount,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              SizedBox(height: 4),
-              Text(method, style: TextStyle(fontSize: 14, color: Colors.grey)),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text(method, style: const TextStyle(fontSize: 14, color: Colors.grey)),
             ],
           ),
         ],

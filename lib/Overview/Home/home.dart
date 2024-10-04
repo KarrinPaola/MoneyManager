@@ -41,7 +41,7 @@ class _OverviewHomeState extends State<OverviewHome> {
     Navigator.push(
       
       context,
-      MaterialPageRoute(builder: (context) =>  TotalExpense()),
+      MaterialPageRoute(builder: (context) =>  const TotalExpense()),
     );
   }
     void goToTotalIncome() {
@@ -49,7 +49,7 @@ class _OverviewHomeState extends State<OverviewHome> {
     Navigator.push(
       
       context,
-      MaterialPageRoute(builder: (context) =>  TotalIncome()),
+      MaterialPageRoute(builder: (context) =>  const TotalIncome()),
     );
   }
 
