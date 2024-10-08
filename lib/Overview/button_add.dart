@@ -31,8 +31,8 @@ class ButtonAdd extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.add, color: Color(0xffffffff),),
-            SizedBox(width: 20,),
+            const Icon(Icons.add, color: Color(0xffffffff),),
+            const SizedBox(width: 20,),
             Text(title, style: const TextStyle(
               color: Color(0xffffffff), 
               fontSize: 15,

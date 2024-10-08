@@ -1,5 +1,6 @@
 
 
+import 'package:back_up/userID_Store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -33,6 +34,7 @@ class _OverviewHomeState extends State<OverviewHome> {
   // Xử lý sign - out
   void signUserOut(){
     FirebaseAuth.instance.signOut();
+    UserStorage.userId = "";
   }
 
 

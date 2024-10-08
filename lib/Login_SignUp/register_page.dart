@@ -1,8 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:back_up/Login_SignUp/componets/register_by_email.dart';
+
+
 import 'package:flutter/material.dart';
 
 
 import 'componets/login_with.dart';
+import 'componets/login_with_google.dart';
 import 'componets/my_button.dart';
 import 'componets/my_textField.dart';
 import 'componets/textGesture.dart';
@@ -24,127 +28,8 @@ class _RegisterPageState extends State<RegisterPage> {
   bool stateRegister = true;
 
   // Register user method
-  void registerUser() async {
-    // Check if passwords match
-    if (passwordController.text != reenterPasswordController.text) {
-      setState(() {
-        stateRegister = false;
-      });
-      print('Passwords do not match.');
-      return;
-    }
-
-    // Kiểm tra xem email đã được đăng ký chưa
-    try {
-      List<String> signInMethods = await FirebaseAuth.instance
-          .fetchSignInMethodsForEmail(usernameController.text.trim());
-
-      if (signInMethods.isNotEmpty) {
-        // Nếu email đã được đăng ký, hiển thị thông báo lỗi
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Register Failed'),
-              content: const Text('Email was used. Please use another Email.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Đóng thông báo
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-        return;
-      }
-    } catch (e) {
-      print('Error checking email existence: $e');
-      return;
-    }
-
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
-
-    try {
-      // Firebase registration
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: usernameController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-
-      // Đăng ký thành công
-      setState(() {
-        stateRegister = true;
-      });
-
-      // Clear các text fields
-      usernameController.clear();
-      passwordController.clear();
-      reenterPasswordController.clear();
-
-      // Đóng loading dialog
-      Navigator.pop(context);
-
-      // Hiển thị thông báo thành công
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Register Successfully'),
-            content: const Text('Your account is created'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // Đóng thông báo
-                  Navigator.pop(context); // Quay về trang login
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    } on FirebaseAuthException catch (e) {
-      print('Register Error: ${e.message}'); // Log full error message
-      setState(() {
-        stateRegister = false; // Set to false on failure
-      });
-
-      // Đóng loading dialog
-      Navigator.pop(context);
-
-      // Hiển thị thông báo lỗi
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Register Failed'),
-            content: Text(e.message ?? 'Have errors, please try again!'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // Đóng thông báo
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
 
   void forgotPassword() {}
-
-  void loginWithGG() {}
 
   void goToLogin() {
     Navigator.pop(context);
@@ -231,7 +116,17 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(
                 height: 25,
               ),
-              MyButton(onTap: registerUser, text: "REGISTER",),
+              MyButton(
+                onTap: () {
+                  RegisterByEmail().registerUser(
+                      context: context,
+                      usernameController: usernameController,
+                      passwordController: passwordController,
+                      reenterPasswordController: reenterPasswordController
+                  );
+                },
+                text: "REGISTER",
+              ),
               const SizedBox(
                 height: 25,
               ),
@@ -249,7 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(
                 height: 15,
               ),
-              LoginWith(
+              const LoginWith(
                 onTap: loginWithGG,
                 imagePath: 'lib/Login_SignUp/Images/google.png',
                 brand: 'GOOGLE',
@@ -257,7 +152,7 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(
                 height: 15,
               ),
-              LoginWith(
+              const LoginWith(
                 onTap: loginWithGG,
                 imagePath: 'lib/Login_SignUp/Images/apple-logo.png',
                 brand: 'APPLE',

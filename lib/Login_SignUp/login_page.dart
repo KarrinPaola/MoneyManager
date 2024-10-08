@@ -1,7 +1,7 @@
+import 'package:back_up/userID_Store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 
 import 'componets/forgotPasswordButtom.dart';
 import 'componets/login_with.dart';
@@ -36,17 +36,23 @@ class _LoginPageState extends State<LoginPage> {
         });
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: usernameController.text.trim(), // Ensure whitespace is trimmed
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: usernameController.text.trim(),
         password: passwordController.text.trim(),
       );
+
+      String userId = userCredential.user!.uid;
+      UserStorage.userId = userId;
+      print('User ID: $userId');
+
       setState(() {
         stateLogin = true; // If login is successful, keep stateLogin true
       });
     } on FirebaseAuthException catch (e) {
-      print('Login Error: ${e.message}'); // Log full error message
+      print('Login Error: ${e.message}');
       setState(() {
-        stateLogin = false; // Set to false on failure
+        stateLogin = false;
       });
     }
 
@@ -56,24 +62,37 @@ class _LoginPageState extends State<LoginPage> {
 
   void forgotPassword() {}
 
-  Future<UserCredential> loginWithGG() async {
-    //gegin interactive sign in progess
-
+  Future<UserCredential> loginWithGG(BuildContext context) async {
+    // Bắt đầu quá trình đăng nhập tương tác với Google
     final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
 
-    //obtain auth details from request 
+    if (gUser == null) {
+      // Người dùng đã hủy đăng nhập
+      throw Exception("Google Sign-In was cancelled");
+    }
 
-    final GoogleSignInAuthentication gAuth = await gUser!.authentication;
+    // Lấy thông tin xác thực từ Google
+    final GoogleSignInAuthentication gAuth = await gUser.authentication;
 
-    // create a new credential for user 
-
+    // Tạo thông tin xác thực cho Firebase
     final credential = GoogleAuthProvider.credential(
       accessToken: gAuth.accessToken,
-      idToken: gAuth.idToken
+      idToken: gAuth.idToken,
     );
 
-    // finally, lets sign in  
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    // Đăng nhập vào Firebase và trả về UserCredential
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+    // Lấy userId (uid) từ đối tượng UserCredential
+    String userId = userCredential.user!.uid;
+    UserStorage.userId = userId;
+
+    // Lưu userId vào Provider
+
+    print('User ID: $userId'); // In ra để kiểm tra
+
+    return userCredential;
   }
 
   void goToRegister() {
@@ -154,7 +173,10 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(
                 height: 25,
               ),
-              MyButton(onTap: signUserIn, text: "LOGIN",),
+              MyButton(
+                onTap: signUserIn,
+                text: "LOGIN",
+              ),
               const SizedBox(
                 height: 25,
               ),
@@ -177,7 +199,9 @@ class _LoginPageState extends State<LoginPage> {
                 height: 15,
               ),
               LoginWith(
-                onTap: loginWithGG,
+                onTap: () async {
+                  await loginWithGG(context); // Gọi loginWithGG
+                },
                 imagePath: 'lib/Login_SignUp/Images/google.png',
                 brand: 'GOOGLE',
               ),
@@ -185,8 +209,10 @@ class _LoginPageState extends State<LoginPage> {
                 height: 15,
               ),
               LoginWith(
-                onTap: loginWithGG,
-                imagePath: 'lib/Login_SignUp/Images/apple-logo.png',
+                onTap: () async {
+                  await loginWithGG(context); // Gọi loginWithGG
+                },
+                imagePath: 'lib/Login_SignUp/Images/google.png',
                 brand: 'APPLE',
               ),
               const SizedBox(
