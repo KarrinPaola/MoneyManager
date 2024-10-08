@@ -1,6 +1,7 @@
 import 'package:back_up/Overview/Saving/add_goal/ch%E1%BB%A9c%20n%C4%83ng/deadlinefield.dart';
 import 'package:back_up/Overview/Saving/add_goal/ch%E1%BB%A9c%20n%C4%83ng/textfields.dart';
 import 'package:back_up/Overview/Saving/add_goal/goal/contribute_type.dart';
+import 'package:back_up/Overview/Saving/screen/main.dart';
 import 'package:flutter/material.dart';
 
 class AddGoals extends StatefulWidget {
@@ -34,6 +35,15 @@ class _AddGoalsState extends State<AddGoals> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
+        leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Screen(),),
+          ); // Quay lại màn hình trước đó
+    },
+  ),
         title: const Text(
           'Add Goal',
           style: TextStyle(
