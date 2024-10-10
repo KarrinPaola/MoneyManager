@@ -1,4 +1,4 @@
-import 'package:back_up/Overview/Saving/add_goal/ch%E1%BB%A9c%20n%C4%83ng/contributefield.dart';
+import 'package:back_up/Overview/Saving/add_goal/components/contributefield.dart';
 import 'package:flutter/material.dart';
 
 

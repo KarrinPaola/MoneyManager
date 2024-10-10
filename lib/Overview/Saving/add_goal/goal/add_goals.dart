@@ -1,7 +1,7 @@
-import 'package:back_up/Overview/Saving/add_goal/ch%E1%BB%A9c%20n%C4%83ng/deadlinefield.dart';
-import 'package:back_up/Overview/Saving/add_goal/ch%E1%BB%A9c%20n%C4%83ng/textfields.dart';
+import 'package:back_up/Overview/Saving/add_goal/components/deadlinefield.dart';
+import 'package:back_up/Overview/Saving/add_goal/components/textfields.dart';
 import 'package:back_up/Overview/Saving/add_goal/goal/contribute_type.dart';
-import 'package:back_up/Overview/Saving/screen/main.dart';
+import 'package:back_up/Overview/Saving/screen/screens/savings_home_screen.dart';
 import 'package:flutter/material.dart';
 
 class AddGoals extends StatefulWidget {
@@ -40,7 +40,7 @@ class _AddGoalsState extends State<AddGoals> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Screen(),),
+            MaterialPageRoute(builder: (context) => SavingsHomeScreen(),),
           ); // Quay lại màn hình trước đó
     },
   ),
