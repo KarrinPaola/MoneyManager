@@ -1,7 +1,7 @@
 import 'package:back_up/Overview/Saving/add_goal/components/deadlinefield.dart';
 import 'package:back_up/Overview/Saving/add_goal/components/textfields.dart';
 import 'package:back_up/Overview/Saving/add_goal/goal/contribute_type.dart';
-import 'package:back_up/Overview/Saving/screen/screens/savings_home_screen.dart';
+import 'package:back_up/Overview/myOverView.dart';
 import 'package:flutter/material.dart';
 
 class AddGoals extends StatefulWidget {
@@ -15,7 +15,8 @@ class _AddGoalsState extends State<AddGoals> {
   // Controllers for the fields
   final TextEditingController goalTitleController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
-  final TextEditingController contributionTypeController = TextEditingController();
+  final TextEditingController contributionTypeController =
+      TextEditingController();
   final TextEditingController deadlineController = TextEditingController();
 
   @override
@@ -36,14 +37,16 @@ class _AddGoalsState extends State<AddGoals> {
         backgroundColor: Colors.white,
         centerTitle: true,
         leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SavingsHomeScreen(),),
-          ); // Quay lại màn hình trước đó
-    },
-  ),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyOverview(),
+              ),
+            ); // Quay lại màn hình trước đó
+          },
+        ),
         title: const Text(
           'Add Goal',
           style: TextStyle(
@@ -66,7 +69,7 @@ class _AddGoalsState extends State<AddGoals> {
               controller: goalTitleController,
             ),
             const SizedBox(height: 10),
-            
+
             // Amount Text Field
             Textfields(
               Title: 'Amount',
@@ -77,19 +80,19 @@ class _AddGoalsState extends State<AddGoals> {
               iconData: Icons.attach_money,
             ),
             const SizedBox(height: 10),
-            
+
             // Contribution Type Field
             ContributionTypeField(
               controller: contributionTypeController,
             ),
             const SizedBox(height: 10),
-            
+
             // Deadline Field
             DeadlineField(
               controller: deadlineController,
             ),
             const SizedBox(height: 20),
-            
+
             // Button to add goal
             ElevatedButton(
               onPressed: () {

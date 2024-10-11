@@ -1,9 +1,6 @@
-
-
 import 'package:back_up/userID_Store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 
 import '../Add/Total Expense/total_expense.dart';
 import '../Add/Total Income/total_income.dart';
@@ -19,9 +16,8 @@ class OverviewHome extends StatefulWidget {
 }
 
 class _OverviewHomeState extends State<OverviewHome> {
-  
   //Return email
-  final user = FirebaseAuth.instance.currentUser; 
+  final user = FirebaseAuth.instance.currentUser;
 
   //Xử lý phần view 2
   int selectedIndex = 0;
@@ -31,27 +27,32 @@ class _OverviewHomeState extends State<OverviewHome> {
     });
   }
 
+  int selectedWalletTag = 0;
+  void _onWalletPressed(int index) {
+    setState(() {
+      selectedWalletTag = index;
+    });
+  }
+
   // Xử lý sign - out
-  void signUserOut(){
+  void signUserOut() {
     FirebaseAuth.instance.signOut();
     UserStorage.userId = "";
   }
 
-
   void goToTotalExpense() {
     print("Navigating to Total Expense");
     Navigator.push(
-      
       context,
-      MaterialPageRoute(builder: (context) =>  const TotalExpense()),
+      MaterialPageRoute(builder: (context) => const TotalExpense()),
     );
   }
-    void goToTotalIncome() {
+
+  void goToTotalIncome() {
     print("Navigating to Total Expense");
     Navigator.push(
-      
       context,
-      MaterialPageRoute(builder: (context) =>  const TotalIncome()),
+      MaterialPageRoute(builder: (context) => const TotalIncome()),
     );
   }
 
@@ -179,6 +180,9 @@ class _OverviewHomeState extends State<OverviewHome> {
                   onTap: goToTotalIncome,
                   leftMargin: true,
                   rightMargin: false,
+                  index: 1,
+                  onTap2: _onWalletPressed,
+                  selectedWalletTag: selectedWalletTag,
                 ),
                 WalletTag(
                   title: 'Total Expense',
@@ -186,6 +190,9 @@ class _OverviewHomeState extends State<OverviewHome> {
                   onTap: goToTotalExpense,
                   leftMargin: false,
                   rightMargin: false,
+                  index: 2,
+                  onTap2: _onWalletPressed,
+                  selectedWalletTag: selectedWalletTag,
                 ),
                 WalletTag(
                   title: 'Total Monthly',
@@ -193,6 +200,9 @@ class _OverviewHomeState extends State<OverviewHome> {
                   onTap: () {},
                   leftMargin: false,
                   rightMargin: true,
+                  index: 3,
+                  onTap2: _onWalletPressed,
+                  selectedWalletTag: selectedWalletTag,
                 )
               ],
             ),
@@ -302,7 +312,6 @@ class _OverviewHomeState extends State<OverviewHome> {
                               ),
                               fontWeight: FontWeight.bold,
                               fontSize: 17),
-                              
                         ),
                         subtitle: Text(
                           entry['date']!,
@@ -317,9 +326,11 @@ class _OverviewHomeState extends State<OverviewHome> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(entry['amount']!,
-                                  style: const TextStyle(color: Color(0xFF000000))),
+                                  style: const TextStyle(
+                                      color: Color(0xFF000000))),
                               Text(entry['payment']!,
-                                  style: const TextStyle(color: Color(0xFF9ba1a8))),
+                                  style: const TextStyle(
+                                      color: Color(0xFF9ba1a8))),
                             ],
                           ),
                         ),
