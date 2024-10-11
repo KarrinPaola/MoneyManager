@@ -17,34 +17,34 @@ class ContributionType {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text('Daily'),
+                title: const Text('Daily'),
                 onTap: () {
                   contributionType = 'Daily';
                   onSelected(contributionType!); // Gọi hàm callback
                   Navigator.pop(context);
                 },
               ),
-              Divider(),
+              const Divider(),
               ListTile(
-                title: Text('Weekly'),
+                title: const Text('Weekly'),
                 onTap: () {
                   contributionType = 'Weekly';
                   onSelected(contributionType!); // Gọi hàm callback
                   Navigator.pop(context);
                 },
               ),
-              Divider(),
+              const Divider(),
               ListTile(
-                title: Text('Monthly'),
+                title: const Text('Monthly'),
                 onTap: () {
                   contributionType = 'Monthly';
                   onSelected(contributionType!); // Gọi hàm callback
                   Navigator.pop(context);
                 },
               ),
-              Divider(),
+              const Divider(),
               ListTile(
-                title: Text('Yearly'),
+                title: const Text('Yearly'),
                 onTap: () {
                   contributionType = 'Yearly';
                   onSelected(contributionType!); // Gọi hàm callback

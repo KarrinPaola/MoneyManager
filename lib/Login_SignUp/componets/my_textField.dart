@@ -14,7 +14,7 @@ class MyTextField extends StatelessWidget {
   final bool obscureText;
   final IconData? prefixIcon;
   final bool? statusLogin;
-  final IconData? suffixIcon; 
+  final IconData? suffixIcon;
 
   @override
   Widget build(BuildContext context) {

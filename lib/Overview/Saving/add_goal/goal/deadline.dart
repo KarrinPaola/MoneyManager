@@ -19,7 +19,7 @@ class DeadlineLogic {
             borderRadius: BorderRadius.circular(15),
           ),
           child: Container(
-            padding: EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(15.0),
             width: 400, // Đặt chiều rộng của dialog
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -30,14 +30,14 @@ class DeadlineLogic {
                   lastDay: DateTime(2100),
                   calendarFormat: calendarFormat,
                   startingDayOfWeek: StartingDayOfWeek.monday,
-                  headerStyle: HeaderStyle(
+                  headerStyle: const HeaderStyle(
                     formatButtonVisible: false,
                     titleCentered: true,
                     leftChevronIcon: Icon(Icons.chevron_left, color: Colors.black),
                     rightChevronIcon: Icon(Icons.chevron_right, color: Colors.black),
                   ),
                   onDaySelected: (selectedDay, focusedDay) {
-                    this.selectedDate = selectedDay;  // Cập nhật ngày đã chọn
+                    selectedDate = selectedDay;  // Cập nhật ngày đã chọn
                     onSelected(selectedDay);            // Gọi hàm callback với ngày đã chọn
                     Navigator.pop(context); // Đóng dialog sau khi chọn ngày
                   },
@@ -49,7 +49,7 @@ class DeadlineLogic {
                     // Định dạng cho ngày hiện tại
                     todayBuilder: (context, day, focusedDay) {
                       return Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.blue, // Màu nền cho ngày hiện tại
                           shape: BoxShape.circle,
                         ),
@@ -57,7 +57,7 @@ class DeadlineLogic {
                         alignment: Alignment.center,
                         child: Text(
                           '${day.day}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white, // Màu chữ cho ngày hiện tại
                           ),
                         ),
@@ -66,7 +66,7 @@ class DeadlineLogic {
                     // Định dạng cho ngày đã chọn
                     selectedBuilder: (context, day, focusedDay) {
                       return Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.grey, // Màu nền cho ngày đã chọn
                           shape: BoxShape.circle,
                         ),
@@ -74,7 +74,7 @@ class DeadlineLogic {
                         alignment: Alignment.center,
                         child: Text(
                           '${day.day}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white, // Màu chữ cho ngày đã chọn
                           ),
                         ),

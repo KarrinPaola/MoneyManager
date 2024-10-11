@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../widgets/goal_item.dart';
 
 class GoalsScreen extends StatelessWidget {
+  const GoalsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final allGoals = [
@@ -12,11 +14,12 @@ class GoalsScreen extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Your Goals',
           style: TextStyle(
             fontSize: 20,
@@ -25,14 +28,14 @@ class GoalsScreen extends StatelessWidget {
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context); // Quay lại màn hình trước
           },
         ),
       ),
       body: ListView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         children: allGoals.map((goal) => GoalItem(goal: goal)).toList(),
       ),
     );

@@ -22,9 +22,9 @@ class _MyOverviewState extends State<MyOverview> {
   int _selectedTab = 0;
   bool _isMenuVisible = false;
 
-  static List<Widget> _widgetList = <Widget>[
+  static final List<Widget> _widgetList = <Widget>[
     const OverviewHome(),
-    SavingsHomeScreen(),
+    const SavingsHomeScreen(),
     const OverviewNotification(),
     const OverviewSetReminder()
   ];

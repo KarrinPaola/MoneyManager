@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SavingsWidget extends StatelessWidget {
   final double currentSavings;
 
-  SavingsWidget({required this.currentSavings});
+  const SavingsWidget({super.key, required this.currentSavings});
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +21,12 @@ class SavingsWidget extends StatelessWidget {
             color: Colors.grey.shade700,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         // Hình tròn hiển thị số tiền với bóng đổ và màu sắc tùy chỉnh
         Container(
           width: 150,
           height: 150,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: Color(0xFF2144FA), // Màu mới
             boxShadow: [
@@ -40,7 +40,7 @@ class SavingsWidget extends StatelessWidget {
           child: Center(
             child: Text(
               '\$$currentSavings',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
                 color: Colors.white, // Chữ trắng nổi bật
@@ -48,14 +48,14 @@ class SavingsWidget extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         // Mục tiêu tháng với thanh trượt lớn hơn
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
             color: Colors.white, // Màu trắng cho widget
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
                 blurRadius: 6,
@@ -71,8 +71,8 @@ class SavingsWidget extends StatelessWidget {
                   Row(
                     children: [
                       Icon(Icons.calendar_today, color: Colors.grey.shade600),
-                      SizedBox(width: 10),
-                      Text(
+                      const SizedBox(width: 10),
+                      const Text(
                         'July 2024',
                         style: TextStyle(
                           fontSize: 18,
@@ -83,7 +83,7 @@ class SavingsWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -94,7 +94,7 @@ class SavingsWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Stack(
                 children: [
                   // Thanh trượt lớn hơn
@@ -111,7 +111,7 @@ class SavingsWidget extends StatelessWidget {
                           flex: savedAmount.toInt(),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Color(
+                              color: const Color(
                                   0xFF2144FA), // Màu của phần đã tiết kiệm
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -133,7 +133,7 @@ class SavingsWidget extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Text(
                             '\$$savedAmount',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white, // Màu chữ trắng

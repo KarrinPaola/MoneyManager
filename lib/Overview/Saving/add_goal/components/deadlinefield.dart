@@ -7,7 +7,7 @@ class DeadlineField extends StatefulWidget {
   final TextEditingController controller;
 
   // Nhận controller từ widget cha
-  DeadlineField({required this.controller});
+  const DeadlineField({super.key, required this.controller});
 
   @override
   _DeadlineFieldState createState() => _DeadlineFieldState();
@@ -23,9 +23,9 @@ class _DeadlineFieldState extends State<DeadlineField> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Deadline',
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Color.fromARGB(255, 153, 172, 193),
             ),

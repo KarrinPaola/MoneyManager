@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class ContributionTypeField extends StatefulWidget {
   final TextEditingController controller;
 
-  ContributionTypeField({required this.controller});
+  const ContributionTypeField({super.key, required this.controller});
 
   @override
   _ContributionTypeFieldState createState() => _ContributionTypeFieldState();
@@ -21,9 +21,9 @@ class _ContributionTypeFieldState extends State<ContributionTypeField> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Contribution Type',
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Color.fromARGB(255, 153, 172, 193),
             ),
@@ -49,9 +49,9 @@ class _ContributionTypeFieldState extends State<ContributionTypeField> {
                     borderSide: const BorderSide(color: Colors.grey),
                   ),
                   hintText: _contributionType.contributionType ?? "Select Type",
-                  suffixIcon: Icon(
+                  suffixIcon: const Icon(
                     Icons.arrow_drop_down,
-                    color: const Color(0xFF9ba1a8),
+                    color: Color(0xFF9ba1a8),
                   ),
                 ),
               ),

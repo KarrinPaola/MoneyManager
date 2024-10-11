@@ -72,9 +72,9 @@ class _TextfieldsState extends State<Textfields> {
               ),
               // Khi TextField được chọn (focus)
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color:
-                      const Color.fromARGB(255, 55, 187, 216),
+                      Color.fromARGB(255, 55, 187, 216),
                   width: 2,
                 ),
                 borderRadius: BorderRadius.circular(15),

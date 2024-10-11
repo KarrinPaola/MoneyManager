@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+
 import 'goal_item.dart';
 
 class GoalsWidget extends StatelessWidget {
   final List<Map<String, dynamic>> goals;
   final VoidCallback onMoreGoalsTap;
 
-  GoalsWidget({required this.goals, required this.onMoreGoalsTap});
+  const GoalsWidget({super.key, required this.goals, required this.onMoreGoalsTap});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 6,
@@ -29,7 +30,7 @@ class GoalsWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Your Goals',
                   style: TextStyle(
                     fontSize: 20,
@@ -37,12 +38,12 @@ class GoalsWidget extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.more_horiz),
+                  icon: const Icon(Icons.more_horiz),
                   onPressed: onMoreGoalsTap,
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Column(
               children: goals.map((goal) => GoalItem(goal: goal)).toList(),
             ),

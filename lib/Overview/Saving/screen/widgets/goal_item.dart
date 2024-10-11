@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class GoalItem extends StatelessWidget {
   final Map<String, dynamic> goal;
 
-  GoalItem({required this.goal});
+  const GoalItem({super.key, required this.goal});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class GoalItem extends StatelessWidget {
         children: [
           // Hiển thị icon mục tiêu
           Icon(icon, size: 40, color: Colors.black54),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,16 +33,16 @@ class GoalItem extends StatelessWidget {
                 // Hiển thị tên mục tiêu
                 Text(
                   goal['name'],
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 // Thanh tiến độ
                 LinearProgressIndicator(
                   value: progress,
                   backgroundColor: Colors.grey[300],
-                  color: Color(0xFF2144FA),
+                  color: const Color(0xFF2144FA),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 // Hiển thị số tiền đã tiết kiệm và mục tiêu
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
