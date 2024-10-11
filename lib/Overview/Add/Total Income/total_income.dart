@@ -18,7 +18,7 @@ class _TotalIncomeState extends State<TotalIncome> {
 
   // Data for different days' spends
   final Map<String, List<Map<String, String>>> _spendsData = {
-    '2024-10-07': [
+    '2024-10-10': [
       {'title': 'Food', 'amount': '+ \$20 + VAT 0.5%', 'method': 'Google Pay'},
       {'title': 'Coffee', 'amount': '+ \$5 + Vat 0.2%', 'method': 'Cash'},
       {'title': 'Coffee', 'amount': '+ \$5 + Vat 0.2%', 'method': 'Cash'},
