@@ -12,31 +12,22 @@ class GoalsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('All Goals'),
-            // Nút dấu cộng nằm ở bên phải tiêu đề
-            InkWell(
-              onTap: () {
-                // Hành động khi ấn nút dấu cộng
-                print('Add new goal');
-                // Bạn có thể thêm logic mở một màn hình hoặc thêm mục tiêu tại đây
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF2144FA), // Màu xanh dương
-                ),
-                padding: EdgeInsets.all(8),
-                child: Icon(
-                  Icons.add,
-                  color: Colors.white, // Màu trắng cho dấu cộng
-                  size: 24,
-                ),
-              ),
-            ),
-          ],
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'Your Goals',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context); // Quay lại màn hình trước
+          },
         ),
       ),
       body: ListView(

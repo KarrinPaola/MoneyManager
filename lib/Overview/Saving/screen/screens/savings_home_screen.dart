@@ -8,12 +8,42 @@ class SavingsHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF5F6F7),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'Savings',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        actions: [
+          Container(
+            margin: EdgeInsets.only(right: 16), // Canh phải
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.blue), // Viền xanh
+              shape: BoxShape.circle,
+              color: Colors.blue, // Nền xanh
+            ),
+            child: IconButton(
+              icon: Icon(Icons.add),
+              color: Colors.white, // Dấu cộng màu trắng
+              onPressed: () {
+                print('Add new savings');
+                // Thêm hành động mở màn hình mới hoặc thực hiện tác vụ
+              },
+            ),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 50),
             Center(
               child: SavingsWidget(currentSavings: 800),
             ),
