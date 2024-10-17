@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class LoginWith extends StatelessWidget {
-  const LoginWith({super.key, required this.onTap, required this.imagePath, required this.brand});
+  const LoginWith(
+      {super.key,
+      required this.onTap,
+      required this.imagePath,
+      required this.brand});
 
   final String imagePath;
   final String brand;
@@ -16,8 +20,7 @@ class LoginWith extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            border: Border.all(width: 1, color: const Color(0xFF9ba1a8))
-        ),
+            border: Border.all(width: 1, color: const Color(0xFF9ba1a8))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

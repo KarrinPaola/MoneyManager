@@ -1,9 +1,6 @@
-
 import 'package:back_up/Login_SignUp/componets/register_by_email.dart';
 
-
 import 'package:flutter/material.dart';
-
 
 import 'componets/login_with.dart';
 import 'componets/login_with_google.dart';
@@ -122,8 +119,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       context: context,
                       usernameController: usernameController,
                       passwordController: passwordController,
-                      reenterPasswordController: reenterPasswordController
-                  );
+                      reenterPasswordController: reenterPasswordController);
                 },
                 text: "REGISTER",
               ),

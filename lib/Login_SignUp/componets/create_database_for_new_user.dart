@@ -6,13 +6,16 @@ Future<void> createUserDatabase(String userId, String? email) async {
   try {
     // Lấy ngày hiện tại nhưng đặt thời gian thành 00:00:00
     final currentDate = DateTime.now();
-    final onlyDate = DateTime(currentDate.year, currentDate.month, currentDate.day);
+    final onlyDate =
+        DateTime(currentDate.year, currentDate.month, currentDate.day);
 
     // Tạo document user với một vài trường cơ bản
     await userDocRef.set({
       'createdAt': Timestamp.fromDate(onlyDate),
       'userId': userId,
       'email': email,
+      'totalIncome': 0, // Khởi tạo totalIncome
+      'totalOutcome': 0, // Khởi tạo totalOutcome
     });
 
     // Tạo sub-collection income

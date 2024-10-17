@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
-class MyTextField extends StatelessWidget {
-  const MyTextField(
+class NumberTextfield extends StatelessWidget {
+  const NumberTextfield(
       {super.key,
       this.controller,
       required this.hintText,
@@ -10,7 +12,7 @@ class MyTextField extends StatelessWidget {
       this.statusLogin,
       this.suffixIcon});
 
-  final controller;
+  final TextEditingController? controller;
   final String hintText;
   final bool obscureText;
   final IconData? prefixIcon;
@@ -25,6 +27,11 @@ class MyTextField extends StatelessWidget {
         style: const TextStyle(color: Color(0xFF000000)),
         controller: controller,
         obscureText: obscureText,
+        keyboardType: TextInputType.number,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly, // Chỉ cho phép nhập số
+          ThousandsSeparatorInputFormatter(), // Formatter tùy chỉnh
+        ],
         decoration: InputDecoration(
             prefixIcon: Icon(
               prefixIcon,
@@ -54,6 +61,29 @@ class MyTextField extends StatelessWidget {
               color: Colors.grey[500],
             )),
       ),
+    );
+  }
+}
+
+// Formatter tùy chỉnh để thêm dấu phân cách hàng nghìn bằng dấu chấm
+class ThousandsSeparatorInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    // Xóa dấu phân cách cũ để xử lý lại
+    String text = newValue.text.replaceAll('.', '');
+
+    if (text.isEmpty) return newValue;
+
+    // Định dạng số với dấu phân cách hàng nghìn bằng dấu chấm
+    final formattedText = NumberFormat('#,###', 'vi')
+        .format(int.parse(text))
+        .replaceAll(',', '.');
+
+    // Trả về giá trị mới với dấu phân cách và con trỏ được đặt lại
+    return TextEditingValue(
+      text: formattedText,
+      selection: TextSelection.collapsed(offset: formattedText.length),
     );
   }
 }

@@ -27,7 +27,7 @@ class MyButton extends StatelessWidget {
                 offset: const Offset(0, 3),
               )
             ]),
-        child:  Center(
+        child: Center(
           child: Text(
             text,
             style: const TextStyle(

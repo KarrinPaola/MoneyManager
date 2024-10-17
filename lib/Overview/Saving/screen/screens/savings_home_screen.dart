@@ -35,7 +35,7 @@ class SavingsHomeScreen extends StatelessWidget {
                 print('Add new savings');
                 Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AddGoals()),
+                    MaterialPageRoute(builder: (context) => const AddGoals()),
                   );
                 // Thêm hành động mở màn hình mới hoặc thực hiện tác vụ
               },
@@ -48,7 +48,7 @@ class SavingsHomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
+            const Center(
               child: SavingsWidget(currentSavings: 800),
             ),
             const SizedBox(height: 30),
@@ -61,7 +61,7 @@ class SavingsHomeScreen extends StatelessWidget {
                 onMoreGoalsTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => GoalsScreen()),
+                    MaterialPageRoute(builder: (context) => const GoalsScreen()),
                   );
                 },
               ),

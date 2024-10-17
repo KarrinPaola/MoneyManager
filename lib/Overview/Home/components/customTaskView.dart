@@ -14,7 +14,9 @@ class CustomTaskView extends StatelessWidget {
       height: 5,
       margin: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
-        color: index == selectedIndex ? const Color(0xFF1e42f9) : const Color(0xFF9ba1a8),
+        color: index == selectedIndex
+            ? const Color(0xFF1e42f9)
+            : const Color(0xFF9ba1a8),
         borderRadius: BorderRadius.circular(8),
       ),
     );

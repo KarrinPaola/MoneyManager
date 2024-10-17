@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'screens/savings_home_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: const Color(0xFFFFFFFF),
       ),
-      home: SavingsHomeScreen(),
+      home: const SavingsHomeScreen(),
     );
   }
 }

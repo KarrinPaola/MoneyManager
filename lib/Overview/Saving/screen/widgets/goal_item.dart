@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class GoalItem extends StatelessWidget {
   final Map<String, dynamic> goal;
 
-  const GoalItem({super.key, required this.goal});
+  const GoalItem({super.key, required this.goal, });
 
   @override
   Widget build(BuildContext context) {
