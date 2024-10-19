@@ -1,9 +1,12 @@
+import 'package:back_up/check_login.dart';
 import 'package:back_up/userID_Store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../check_fetch_data.dart';
 import '../Add/Total Expense/total_expense.dart';
 import '../Add/Total Income/total_income.dart';
+import '../Add/components/load_data.dart';
 import 'components/customButton.dart';
 import 'components/customTaskView.dart';
 import 'components/walletTag.dart';
@@ -18,6 +21,82 @@ class OverviewHome extends StatefulWidget {
 class _OverviewHomeState extends State<OverviewHome> {
   //Return email
   final user = FirebaseAuth.instance.currentUser;
+  final Service _service = Service();
+  double _totalIncome = 0;
+  double _totalExpense = 0;
+  List<Map<String, String>> _incomeItems = [];
+  List<Map<String, String>> _expenseItems = [];
+  List<Map<String, String>> _remindItems = [];
+
+  List<Map<String, String>> getSelectedItems(int selectedIndex) {
+    switch (selectedIndex) {
+      case 0:
+        return _expenseItems;
+      case 1:
+        return _remindItems; // Remind items
+      case 2:
+        return _incomeItems;
+      default:
+        return [];
+    }
+  }
+
+  Future<void> _loadTotalIncome() async {
+    String? userId = UserStorage.userId; // Lấy userId nếu cần
+    double total = await _service.fetchDataForMonth(
+        userId, DateTime.now(), 'income', );
+
+    // Cập nhật state để hiển thị tổng thu nhập mới
+    setState(() {
+      _totalIncome = total;
+      totalIncomeGL = _totalIncome; 
+    });
+  }
+
+  Future<void> _loadTotalExpense() async {
+    String? userId = UserStorage.userId; // Lấy userId nếu cần
+    double total = await _service.fetchDataForMonth(
+        userId, DateTime.now(), 'outcome', );
+
+    // Cập nhật state để hiển thị tổng thu nhập mới
+    setState(() {
+      _totalExpense = total;
+      totalExpenseGL = _totalExpense; 
+    });
+  }
+
+  Future<void> _loadIncome() async {
+    String? userId = UserStorage.userId; // Lấy userId nếu cần
+    List<Map<String, String>> incomeItemLoad = await _service
+        .fetchDataForMonthEachDay(userId, DateTime.now(), 'income', );
+
+    // Cập nhật state để hiển thị tổng thu nhập mới
+    setState(() {
+      _incomeItems = incomeItemLoad;
+    });
+  }
+
+  Future<void> _loadExpense() async {
+    String? userId = UserStorage.userId; // Lấy userId nếu cần
+    List<Map<String, String>> expenseItemLoad = await _service
+        .fetchDataForMonthEachDay(userId, DateTime.now(), 'outcome', );
+
+    // Cập nhật state để hiển thị tổng thu nhập mới
+    setState(() {
+      _expenseItems = expenseItemLoad;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (isLogined == true) {
+      _loadTotalIncome(); // Gọi hàm load total income
+      _loadTotalExpense(); // Gọi hàm load total expense
+      _loadExpense();
+      _loadIncome();
+    }
+  }
 
   //Xử lý phần view 2
   int selectedIndex = 0;
@@ -38,75 +117,42 @@ class _OverviewHomeState extends State<OverviewHome> {
   void signUserOut() {
     FirebaseAuth.instance.signOut();
     UserStorage.userId = "";
+    isLogined = false;
   }
 
-  void goToTotalExpense() {
+  void goToTotalExpense() async {
     print("Navigating to Total Expense");
-    Navigator.push(
+    final update = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const TotalExpense()),
     );
+    if (update == true) {
+      // Gọi lại các phương thức để cập nhật lại dữ liệu thu nhập
+      setState(() {
+        _totalExpense = totalExpenseGL; 
+        _totalIncome = totalIncomeGL; 
+        _loadExpense(); // Gọi hàm load expense
+        _loadIncome(); // Gọi hàm load income
+      });
+    }
   }
 
-  void goToTotalIncome() {
+  void goToTotalIncome() async {
     print("Navigating to Total Expense");
-    Navigator.push(
+    final update = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const TotalIncome()),
     );
+    if (update == true) {
+      // Gọi lại các phương thức để cập nhật lại dữ liệu thu nhập
+      setState(() {
+        _loadTotalIncome(); // Gọi hàm load total income
+        _loadTotalExpense(); // Gọi hàm load total expense
+        _loadExpense(); // Gọi hàm load expense
+        _loadIncome(); // Gọi hàm load income
+      });
+    }
   }
-
-  // Dữ liệu mẫu cho các danh sách
-  final List<List<Map<String, String>>> lists = [
-    [
-      {
-        "title": "Food",
-        "date": "20 Feb 2024",
-        "amount": "+ \$20 + Vat 0.5%",
-        "payment": "Google Pay"
-      },
-      {
-        "title": "Uber",
-        "date": "13 Mar 2024",
-        "amount": "- \$18 + Vat 0.8%",
-        "payment": "Cash"
-      },
-      {
-        "title": "Shopping",
-        "date": "11 Mar 2024",
-        "amount": "- \$400 + Vat 0.12%",
-        "payment": "Paytm"
-      },
-    ],
-    [
-      {
-        "title": "Water Bill",
-        "date": "10 Jan 2024",
-        "amount": "- \$50",
-        "payment": "Credit Card"
-      },
-      {
-        "title": "Electricity",
-        "date": "25 Jan 2024",
-        "amount": "- \$100",
-        "payment": "Direct Debit"
-      },
-    ],
-    [
-      {
-        "title": "Income",
-        "date": "01 Mar 2024",
-        "amount": "+ \$1000",
-        "payment": "Bank Transfer"
-      },
-      {
-        "title": "Bonus",
-        "date": "05 Mar 2024",
-        "amount": "+ \$500",
-        "payment": "Bank Transfer"
-      },
-    ],
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +222,7 @@ class _OverviewHomeState extends State<OverviewHome> {
               children: [
                 WalletTag(
                   title: 'Total Income',
-                  money: 400,
+                  money: _service.formatCurrency(_totalIncome),
                   onTap: goToTotalIncome,
                   leftMargin: true,
                   rightMargin: false,
@@ -186,7 +232,7 @@ class _OverviewHomeState extends State<OverviewHome> {
                 ),
                 WalletTag(
                   title: 'Total Expense',
-                  money: 400,
+                  money: _service.formatCurrency(_totalExpense),
                   onTap: goToTotalExpense,
                   leftMargin: false,
                   rightMargin: false,
@@ -196,7 +242,7 @@ class _OverviewHomeState extends State<OverviewHome> {
                 ),
                 WalletTag(
                   title: 'Total Monthly',
-                  money: 400,
+                  money: _service.formatCurrency(_totalIncome - _totalExpense),
                   onTap: () {},
                   leftMargin: false,
                   rightMargin: true,
@@ -296,9 +342,10 @@ class _OverviewHomeState extends State<OverviewHome> {
                 const SizedBox(height: 20),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: lists[selectedIndex].length,
+                    reverse: true,
+                    itemCount: getSelectedItems(selectedIndex).length,
                     itemBuilder: (context, index) {
-                      final entry = lists[selectedIndex][index];
+                      final entry = getSelectedItems(selectedIndex)[index];
                       return ListTile(
                         leading: const Icon(
                           Icons.monetization_on,
@@ -311,7 +358,7 @@ class _OverviewHomeState extends State<OverviewHome> {
                                 0xFF000000,
                               ),
                               fontWeight: FontWeight.bold,
-                              fontSize: 17),
+                              fontSize: 13),
                         ),
                         subtitle: Text(
                           entry['date']!,
@@ -328,7 +375,7 @@ class _OverviewHomeState extends State<OverviewHome> {
                               Text(entry['amount']!,
                                   style: const TextStyle(
                                       color: Color(0xFF000000))),
-                              Text(entry['payment']!,
+                              Text(entry['tag']!,
                                   style: const TextStyle(
                                       color: Color(0xFF9ba1a8))),
                             ],

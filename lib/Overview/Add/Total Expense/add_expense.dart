@@ -1,9 +1,14 @@
+import 'package:back_up/Overview/Add/components/number_textField.dart';
+import 'package:back_up/Overview/Add/components/process_add_in_out.dart';
+import 'package:back_up/Overview/Add/components/process_add_tag_name.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
 import '../../../Login_SignUp/componets/my_textField.dart';
+import '../../../userID_Store.dart';
+import '../components/fetchTagsFromDatabase.dart';
 import '../components/tag_name.dart';
 
 class AddExpense extends StatefulWidget {
@@ -16,15 +21,18 @@ class AddExpense extends StatefulWidget {
 class _AddExpenseState extends State<AddExpense> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  var update = false;
 
   void backToTotalExpense() {
-    Navigator.pop(context);
+    Navigator.pop(context, update);
   }
 
   final titleController = TextEditingController();
   final moneyController = TextEditingController();
 
   int _selectedTagIndex = -1; // Chỉ số của tag được chọn (khởi tạo là -1)
+
+  String tagNameSelected = "";
 
   // Hàm xử lý khi tag được nhấn
   void _onTagTap(int index) {
@@ -33,9 +41,8 @@ class _AddExpenseState extends State<AddExpense> {
     });
   }
 
-  Future<List<String>> fetchTagsFromDatabase() async {
-    // Trả về danh sách tag
-    return [ 'Salary', 'Rewards', 'Money extra', 'Food', 'Go'];
+  void _reloadTags() {
+    setState(() {});
   }
 
   @override
@@ -43,11 +50,19 @@ class _AddExpenseState extends State<AddExpense> {
     return Scaffold(
       backgroundColor: const Color(0xFFedeff1),
       appBar: AppBar(
-      
-        backgroundColor: const Color(0xffffffff),
-        title: const Text('Add Expense', style: TextStyle(
-          fontWeight: FontWeight.bold,
-        ),),
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Add Expense',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back), // Thay mũi tên bằng một icon khác
+          onPressed: () {
+            // Hành động khi nhấn vào icon
+            backToTotalExpense();
+          },
+        ),
       ),
       body: Column(
         children: [
@@ -134,7 +149,7 @@ class _AddExpenseState extends State<AddExpense> {
             height: 10,
           ),
           MyTextField(
-            hintText: 'What need your money?',
+            hintText: 'How you get this money',
             obscureText: false,
             controller: titleController,
           ),
@@ -160,21 +175,19 @@ class _AddExpenseState extends State<AddExpense> {
           const SizedBox(
             height: 10,
           ),
-          MyTextField(
+          NumberTextfield(
             hintText: 'How much',
             suffixIcon: CupertinoIcons.money_dollar,
             obscureText: false,
             controller: moneyController,
           ),
-          const SizedBox(
-            height: 30,
-          ),
-          const Padding(
-            padding: EdgeInsets.only(left: 25),
+          const SizedBox(height: 30),
+          Padding(
+            padding: const EdgeInsets.only(left: 25, right: 25),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Expense Category',
                   style: TextStyle(
                     color: Color(0xFF9ba1a8),
@@ -182,43 +195,156 @@ class _AddExpenseState extends State<AddExpense> {
                     fontSize: 15,
                   ),
                 ),
+                GestureDetector(
+                  onTap: () {
+                    Process_Add_Tag(context, _reloadTags);
+                  },
+                  child: const Row(
+                    children: [
+                      Icon(Icons.add),
+                      Text("Add Tag"),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
+          const SizedBox(height: 10),
           FutureBuilder<List<String>>(
-            future: fetchTagsFromDatabase(), // Gọi hàm lấy tag
+            future: fetchTagsFromDatabase("tag"),
             builder:
                 (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
               if (snapshot.hasError) {
-                // Hiển thị thông báo lỗi nếu có
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                // Kiểm tra nếu không có tag nào được trả về
                 return const Center(child: Text('No tags found.'));
               }
 
-              // Lấy danh sách tag từ snapshot
               List<String> tags = snapshot.data!;
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Wrap(
-                  alignment: WrapAlignment.start,
-                  children: List.generate(tags.length, (index) {
-                    return TagName(
-                      title: tags[index],
-                      isSelected: _selectedTagIndex == index, // Chỉ định trạng thái selected
-                      ontap: () => _onTagTap(index), // Xử lý khi nhấn vào tag
-                    );
-                  }),
-                ),
+              return Expanded(
+                child: ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    children: [
+                      Wrap(
+                        alignment: WrapAlignment.start,
+                        children: List.generate(tags.length, (index) {
+                          return TagName(
+                            title: tags[index],
+                            isSelected: _selectedTagIndex == index,
+                            ontap: () {
+                              setState(() {
+                                _selectedTagIndex = index;
+                                tagNameSelected = tags[index];
+                                print(tagNameSelected);
+                              });
+                            },
+                          );
+                        }),
+                      ),
+                    ]),
               );
             },
           )
         ],
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.only(bottom: 30, top: 20),
+        decoration: const BoxDecoration(
+            color: Color(0xffffffff),
+            border: Border(
+              top: BorderSide(
+                color: Color(0xFFedeff1),
+                width: 1,
+              ),
+            )),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () {
+                // Validate inputs
+                if (titleController.text.isNotEmpty &&
+                    moneyController.text.isNotEmpty &&
+                    _selectedTagIndex != -1 &&
+                    UserStorage.userId != null) {
+                  // Kiểm tra xem userId có null hay không
+
+                  // Parse money to double, loại bỏ dấu phẩy và dấu chấm
+                  double money = double.tryParse(moneyController.text
+                          .replaceAll('.', '')
+                          .replaceAll(',', '')) ??
+                      0.0;
+
+                  // Call Process_Add_In_Out with all necessary data
+                  Process_Add_In_Out(
+                    UserStorage.userId!,
+                    titleController.text,
+                    money,
+                    tagNameSelected,
+                    _selectedDay ?? DateTime.now(),
+                    'outcome',
+                  );
+
+                  update = true;
+
+                  // Hiển thị thông báo thành công và các lựa chọn
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Add Expense Successful"),
+                        content: const Text("What would you like to do next?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Đóng dialog
+                              backToTotalExpense(); // Quay về màn hình trước
+                            },
+                            child: const Text("Back to Home"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Đóng dialog
+                              // Reset form để người dùng có thể thêm tiếp
+                              titleController.clear();
+                              moneyController.clear();
+                              setState(() {
+                                _selectedTagIndex = -1;
+                                _selectedDay = DateTime.now();
+                              });
+                            },
+                            child: const Text("Add More"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  // Handle validation error (e.g., show a Snackbar)
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please fill all fields')),
+                  );
+                }
+              },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: const Color(0xFF1e42f9)),
+                child: const Text(
+                  "Confirm",
+                  style: TextStyle(
+                    color: Color(0xffffffff),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

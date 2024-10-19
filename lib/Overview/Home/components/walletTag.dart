@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 
 class WalletTag extends StatefulWidget {
   final String title;
-  final num money;
+  final String money;
   final VoidCallback onTap;
   final Function(int) onTap2;
   final bool leftMargin;
   final bool rightMargin; // Hàm callback khi người dùng nhấn vào widget
-  final int index; 
+  final int index;
   final int selectedWalletTag;
-
 
   const WalletTag({
     super.key,
@@ -17,7 +16,10 @@ class WalletTag extends StatefulWidget {
     required this.money,
     required this.onTap,
     required this.leftMargin,
-    required this.rightMargin, required this.index, required this.selectedWalletTag, required this.onTap2,
+    required this.rightMargin,
+    required this.index,
+    required this.selectedWalletTag,
+    required this.onTap2,
   });
 
   @override
@@ -25,13 +27,12 @@ class WalletTag extends StatefulWidget {
 }
 
 class _WalletTagState extends State<WalletTag> {
-   // Trạng thái để kiểm tra xem có được chọn hay không
+  // Trạng thái để kiểm tra xem có được chọn hay không
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        
         widget.onTap(); // Gọi hàm callback từ cha
         widget.onTap2(widget.index);
       },
@@ -45,8 +46,9 @@ class _WalletTagState extends State<WalletTag> {
             right: widget.rightMargin ? 20 : 10),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color:
-              widget.index == widget.selectedWalletTag ? const Color(0xFF1e42f9) : const Color(0xFFFFFFFF), // Đổi màu nền
+          color: widget.index == widget.selectedWalletTag
+              ? const Color(0xFF1e42f9)
+              : const Color(0xFFFFFFFF), // Đổi màu nền
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -64,23 +66,27 @@ class _WalletTagState extends State<WalletTag> {
             Icon(
               Icons.wallet,
               size: 30,
-              color: widget.index == widget.selectedWalletTag ? Colors.white : Colors.black, // Đổi màu icon
+              color: widget.index == widget.selectedWalletTag
+                  ? Colors.white
+                  : Colors.black, // Đổi màu icon
             ),
             Text(
               widget.title,
               style: TextStyle(
-                color: widget.index == widget.selectedWalletTag ? Colors.white : Colors.black, // Đổi màu chữ
+                color: widget.index == widget.selectedWalletTag
+                    ? Colors.white
+                    : Colors.black, // Đổi màu chữ
                 fontSize: 13,
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
             Text(
-              '\$${widget.money}',
+              widget.money,
               style: TextStyle(
                   color: widget.index == widget.selectedWalletTag
                       ? Colors.white
                       : Colors.black, // Đổi màu số tiền
-                  fontSize: 20,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold),
             ),
           ],

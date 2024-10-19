@@ -3,10 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 Future<void> createUserDatabase(String userId, String? email) async {
   final userDocRef = FirebaseFirestore.instance.collection('users').doc(userId);
 
-  try {
     // Lấy ngày hiện tại nhưng đặt thời gian thành 00:00:00
     final currentDate = DateTime.now();
-    final onlyDate = DateTime(currentDate.year, currentDate.month, currentDate.day);
+    final onlyDate =
+        DateTime(currentDate.year, currentDate.month, currentDate.day);
 
     // Tạo document user với một vài trường cơ bản
     await userDocRef.set({
@@ -45,7 +45,4 @@ Future<void> createUserDatabase(String userId, String? email) async {
     });
 
     print('User database created successfully');
-  } catch (e) {
-    print('Error creating user database: $e');
-  }
 }

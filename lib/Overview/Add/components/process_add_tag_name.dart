@@ -29,7 +29,8 @@ Future<void> Process_Add_Tag(
           ),
           ElevatedButton(
             onPressed: () async {
-              String newTag = newTagController.text;
+              // Lấy tag mới và loại bỏ ký tự khoảng trắng
+              String newTag = newTagController.text.trim();
               if (newTag.isNotEmpty) {
                 // Cập nhật tag mới vào Firestore
                 final userDocRef = FirebaseFirestore.instance

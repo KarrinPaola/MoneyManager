@@ -12,8 +12,8 @@ class Forgotpasswordbuttom extends StatelessWidget {
         padding: const EdgeInsets.all(15),
         margin: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
-            color: const Color(0xffffffff),
-            borderRadius: BorderRadius.circular(15),
+          color: const Color(0xffffffff),
+          borderRadius: BorderRadius.circular(15),
         ),
         child: const Center(
           child: Text(

@@ -1,6 +1,6 @@
+import 'package:back_up/Overview/Add/components/number_textField.dart';
 import 'package:back_up/Overview/Add/components/process_add_in_out.dart';
 import 'package:back_up/Overview/Add/components/process_add_tag_name.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import '../../../Login_SignUp/componets/my_textField.dart';
 import '../../../userID_Store.dart';
 import '../components/tag_name.dart';
+import '../components/fetchTagsFromDatabase.dart';
 
 class AddIncome extends StatefulWidget {
   const AddIncome({super.key});
@@ -20,9 +21,10 @@ class AddIncome extends StatefulWidget {
 class _AddIncomeState extends State<AddIncome> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  var update = false;
 
   void backToTotalIncome() {
-    Navigator.pop(context);
+    Navigator.pop(context, update);
   }
 
   final titleController = TextEditingController();
@@ -43,32 +45,6 @@ class _AddIncomeState extends State<AddIncome> {
     setState(() {});
   }
 
-  Future<List<String>> fetchTagsFromDatabase() async {
-    try {
-      // Lấy reference của user document từ Firestore
-      final userDocRef = FirebaseFirestore.instance
-          .collection('users')
-          .doc(UserStorage.userId);
-
-      // Lấy tất cả document trong collection 'tag'
-      QuerySnapshot snapshot = await userDocRef.collection('tag').get();
-
-      // Khởi tạo list để chứa các tag
-      List<String> tags = [];
-
-      // Duyệt qua các document và lấy giá trị của field 'tag'
-      for (var doc in snapshot.docs) {
-        tags.add(doc.get('tag') as String);
-      }
-
-      // Trả về danh sách tag
-      return tags;
-    } catch (e) {
-      print("Error fetching tags: $e");
-      return []; // Trả về danh sách rỗng nếu có lỗi xảy ra
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,6 +54,14 @@ class _AddIncomeState extends State<AddIncome> {
         title: const Text(
           'Add Income',
           style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back), // Thay mũi tên bằng một icon khác
+          onPressed: () {
+            // Hành động khi nhấn vào icon
+            backToTotalIncome();
+          },
         ),
       ),
       body: Column(
@@ -191,7 +175,7 @@ class _AddIncomeState extends State<AddIncome> {
           const SizedBox(
             height: 10,
           ),
-          MyTextField(
+          NumberTextfield(
             hintText: 'How much',
             suffixIcon: CupertinoIcons.money_dollar,
             obscureText: false,
@@ -227,7 +211,7 @@ class _AddIncomeState extends State<AddIncome> {
           ),
           const SizedBox(height: 10),
           FutureBuilder<List<String>>(
-            future: fetchTagsFromDatabase(),
+            future: fetchTagsFromDatabase("tag"),
             builder:
                 (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
               if (snapshot.hasError) {
@@ -238,24 +222,27 @@ class _AddIncomeState extends State<AddIncome> {
 
               List<String> tags = snapshot.data!;
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Wrap(
-                  alignment: WrapAlignment.start,
-                  children: List.generate(tags.length, (index) {
-                    return TagName(
-                      title: tags[index],
-                      isSelected: _selectedTagIndex == index,
-                      ontap: () {
-                        setState(() {
-                          _selectedTagIndex = index;
-                          tagNameSelected = tags[index];
-                          print(tagNameSelected);
-                        });
-                      },
-                    );
-                  }),
-                ),
+              return Expanded(
+                child: ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    children: [
+                      Wrap(
+                        alignment: WrapAlignment.start,
+                        children: List.generate(tags.length, (index) {
+                          return TagName(
+                            title: tags[index],
+                            isSelected: _selectedTagIndex == index,
+                            ontap: () {
+                              setState(() {
+                                _selectedTagIndex = index;
+                                tagNameSelected = tags[index];
+                                print(tagNameSelected);
+                              });
+                            },
+                          );
+                        }),
+                      ),
+                    ]),
               );
             },
           )
@@ -283,22 +270,56 @@ class _AddIncomeState extends State<AddIncome> {
                     UserStorage.userId != null) {
                   // Kiểm tra xem userId có null hay không
 
-                  // Parse money to double
-                  double money = double.tryParse(moneyController.text) ?? 0.0;
+                  // Parse money to double, loại bỏ dấu phẩy và dấu chấm
+                  double money = double.tryParse(moneyController.text
+                          .replaceAll('.', '')
+                          .replaceAll(',', '')) ??
+                      0.0;
 
                   // Call Process_Add_In_Out with all necessary data
                   Process_Add_In_Out(
-                      UserStorage
-                          .userId!, // Dùng toán tử ! để lấy giá trị String không null
-                      titleController.text,
-                      money,
-                      tagNameSelected,
-                      _selectedDay ??
-                          DateTime.now(), // Use selected day or current day
-                      'income' // Or 'outcome' based on your requirements
-                      );
+                    UserStorage.userId!,
+                    titleController.text,
+                    money,
+                    tagNameSelected,
+                    _selectedDay ?? DateTime.now(),
+                    'income',
+                  );
 
-                  backToTotalIncome();
+                  update = true;
+
+                  // Hiển thị thông báo thành công và các lựa chọn
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Add Income Successful"),
+                        content: const Text("What would you like to do next?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Đóng dialog
+                              backToTotalIncome(); // Quay về màn hình trước
+                            },
+                            child: const Text("Back to Home"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Đóng dialog
+                              // Reset form để người dùng có thể thêm tiếp
+                              titleController.clear();
+                              moneyController.clear();
+                              setState(() {
+                                _selectedTagIndex = -1;
+                                _selectedDay = DateTime.now();
+                              });
+                            },
+                            child: const Text("Add More"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 } else {
                   // Handle validation error (e.g., show a Snackbar)
                   ScaffoldMessenger.of(context).showSnackBar(
