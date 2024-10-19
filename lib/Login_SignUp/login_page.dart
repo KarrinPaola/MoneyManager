@@ -1,10 +1,13 @@
-import 'package:back_up/userID_Store.dart';
+
+import 'package:back_up/check_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
+import '../Overview/myOverView.dart';
+import '../userID_Store.dart';
 import 'componets/forgotPasswordButtom.dart';
 import 'componets/login_with.dart';
+import 'componets/login_with_google.dart';
 import 'componets/my_button.dart';
 import 'componets/my_textField.dart';
 import 'componets/textGesture.dart';
@@ -26,7 +29,9 @@ class _LoginPageState extends State<LoginPage> {
   bool stateLogin = true;
 
   //Sign user in method
+    // Sign user in method
   void signUserIn() async {
+    // Hiển thị hộp thoại tải lên
     showDialog(
         context: context,
         builder: (context) {
@@ -36,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
         });
 
     try {
+      // Đăng nhập Firebase
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: usernameController.text.trim(),
@@ -43,57 +49,51 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       String userId = userCredential.user!.uid;
-      UserStorage.userId = userId;
+      UserStorage.userId = userId; // Lưu trữ userId
       print('User ID: $userId');
 
+      // Cập nhật trạng thái đăng nhập thành công
       setState(() {
-        stateLogin = true; // If login is successful, keep stateLogin true
+        stateLogin = true;
+        isLogined = true;
       });
+
+      // Đóng hộp thoại tải lên
+      Navigator.pop(context);
+
     } on FirebaseAuthException catch (e) {
       print('Login Error: ${e.message}');
+      
+      // Cập nhật trạng thái đăng nhập thất bại
       setState(() {
         stateLogin = false;
       });
-    }
 
-    //Pop the circle loading
-    Navigator.pop(context);
+      // Đóng hộp thoại tải lên
+      Navigator.pop(context);
+
+      // Hiển thị thông báo lỗi
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Login Failed'),
+            content: Text(e.message ?? 'An error occurred.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Đóng hộp thoại lỗi
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   void forgotPassword() {}
-
-  Future<UserCredential> loginWithGG(BuildContext context) async {
-    // Bắt đầu quá trình đăng nhập tương tác với Google
-    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
-
-    if (gUser == null) {
-      // Người dùng đã hủy đăng nhập
-      throw Exception("Google Sign-In was cancelled");
-    }
-
-    // Lấy thông tin xác thực từ Google
-    final GoogleSignInAuthentication gAuth = await gUser.authentication;
-
-    // Tạo thông tin xác thực cho Firebase
-    final credential = GoogleAuthProvider.credential(
-      accessToken: gAuth.accessToken,
-      idToken: gAuth.idToken,
-    );
-
-    // Đăng nhập vào Firebase và trả về UserCredential
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-
-    // Lấy userId (uid) từ đối tượng UserCredential
-    String userId = userCredential.user!.uid;
-    UserStorage.userId = userId;
-
-    // Lưu userId vào Provider
-
-    print('User ID: $userId'); // In ra để kiểm tra
-
-    return userCredential;
-  }
 
   void goToRegister() {
     Navigator.push(
@@ -200,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               LoginWith(
                 onTap: () async {
-                  await loginWithGG(context); // Gọi loginWithGG
+                  await loginWithGG(); // Gọi loginWithGG
                 },
                 imagePath: 'lib/Login_SignUp/Images/google.png',
                 brand: 'GOOGLE',
@@ -210,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               LoginWith(
                 onTap: () async {
-                  await loginWithGG(context); // Gọi loginWithGG
+                  await loginWithGG(); // Gọi loginWithGG
                 },
                 imagePath: 'lib/Login_SignUp/Images/google.png',
                 brand: 'APPLE',

@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../userID_Store.dart';
 
-Future<List<String>> fetchTagsFromDatabase() async {
+Future<List<String>> fetchTagsFromDatabase(String tableTagName) async {
   try {
     // Lấy reference của user document từ Firestore
     final userDocRef =
         FirebaseFirestore.instance.collection('users').doc(UserStorage.userId);
 
     // Lấy tất cả document trong collection 'tag'
-    QuerySnapshot snapshot = await userDocRef.collection('tag').get();
+    QuerySnapshot snapshot = await userDocRef.collection(tableTagName).get();
 
     // Khởi tạo list để chứa các tag
     List<String> tags = [];

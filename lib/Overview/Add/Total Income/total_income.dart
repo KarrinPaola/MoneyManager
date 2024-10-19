@@ -1,3 +1,5 @@
+import 'package:back_up/check_fetch_data.dart';
+import 'package:back_up/check_login.dart';
 import 'package:back_up/userID_Store.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:back_up/Overview/Add/Total%20Income/add_income.dart';
@@ -20,22 +22,24 @@ class _TotalIncomeState extends State<TotalIncome> {
   final Service _service = Service();
   double _totalIncome = 0;
   List<Map<String, String>> _incomeItems = [];
+  bool updateTotal = false; 
 
   Future<void> _loadTotalIncome() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
     double total =
-        await _service.fetchDataForMonth(userId, _selectedDay!, 'income');
+        await _service.fetchDataForMonth(userId, _selectedDay!, 'income',);
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
       _totalIncome = total;
+      totalIncomeGL = _totalIncome; 
     });
   }
 
   Future<void> _loadIncome() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
     List<Map<String, String>> incomeItemLoad =
-        await _service.fetchDataForDay(userId, _selectedDay!, 'income');
+        await _service.fetchDataForDay(userId, _selectedDay!, 'income',);
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
@@ -50,7 +54,7 @@ class _TotalIncomeState extends State<TotalIncome> {
     super.initState();
     _selectedDay = _focusedDay;
     _loadIncome(); // Lấy dữ liệu thu nhập cho ngày hiện tại
-    _loadTotalIncome();
+    _totalIncome = totalIncomeGL; 
   }
 
   // Phương thức để load thu nhập cho ngày đã chọn
@@ -59,9 +63,10 @@ class _TotalIncomeState extends State<TotalIncome> {
       _selectedDay = day;
     });
     _loadIncome();
-    _loadTotalIncome();
   }
-
+  void backToHome(){
+    Navigator.pop(context, true);
+  }
   void goToAddIncome() async {
     final update = await Navigator.push(
       context,
@@ -72,11 +77,10 @@ class _TotalIncomeState extends State<TotalIncome> {
       setState(() {
         _loadIncome();
         _loadTotalIncome();
+        updateTotal = update;
       });
     }
   }
-
-  // Định dạng hiển thị số kiểu VN
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +89,15 @@ class _TotalIncomeState extends State<TotalIncome> {
       appBar: AppBar(
         backgroundColor: const Color(0xffffffff),
         title: const Text('Total Income'),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back), // Thay mũi tên bằng một icon khác
+          onPressed: () {
+            // Hành động khi nhấn vào icon
+            backToHome();
+            print("Quay về home");
+          },
+        ),
       ),
       body: Column(
         children: [

@@ -1,4 +1,4 @@
-import 'package:back_up/Login_SignUp/componets/register_by_email.dart';
+
 
 import 'package:flutter/material.dart';
 
@@ -6,6 +6,7 @@ import 'componets/login_with.dart';
 import 'componets/login_with_google.dart';
 import 'componets/my_button.dart';
 import 'componets/my_textField.dart';
+import 'componets/register_by_email.dart';
 import 'componets/textGesture.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -115,7 +116,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               MyButton(
                 onTap: () {
-                  RegisterByEmail().registerUser(
+                  registerUser(
                       context: context,
                       usernameController: usernameController,
                       passwordController: passwordController,

@@ -1,7 +1,9 @@
+import 'package:back_up/check_login.dart';
 import 'package:back_up/userID_Store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../check_fetch_data.dart';
 import '../Add/Total Expense/total_expense.dart';
 import '../Add/Total Income/total_income.dart';
 import '../Add/components/load_data.dart';
@@ -27,44 +29,46 @@ class _OverviewHomeState extends State<OverviewHome> {
   List<Map<String, String>> _remindItems = [];
 
   List<Map<String, String>> getSelectedItems(int selectedIndex) {
-  switch (selectedIndex) {
-    case 0:
-      return _expenseItems;
-    case 1:
-      return _remindItems;  // Remind items
-    case 2:
-      return _incomeItems;
-    default:
-      return [];
+    switch (selectedIndex) {
+      case 0:
+        return _expenseItems;
+      case 1:
+        return _remindItems; // Remind items
+      case 2:
+        return _incomeItems;
+      default:
+        return [];
+    }
   }
-}
 
   Future<void> _loadTotalIncome() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
-    double total =
-        await _service.fetchDataForMonth(userId, DateTime.now(), 'income');
+    double total = await _service.fetchDataForMonth(
+        userId, DateTime.now(), 'income', );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
       _totalIncome = total;
+      totalIncomeGL = _totalIncome; 
     });
   }
 
   Future<void> _loadTotalExpense() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
-    double total =
-        await _service.fetchDataForMonth(userId, DateTime.now(), 'outcome');
+    double total = await _service.fetchDataForMonth(
+        userId, DateTime.now(), 'outcome', );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
       _totalExpense = total;
+      totalExpenseGL = _totalExpense; 
     });
   }
 
   Future<void> _loadIncome() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
-    List<Map<String, String>> incomeItemLoad =
-        await _service.fetchDataForMonthEachDay(userId, DateTime.now(), 'income');
+    List<Map<String, String>> incomeItemLoad = await _service
+        .fetchDataForMonthEachDay(userId, DateTime.now(), 'income', );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
@@ -74,8 +78,8 @@ class _OverviewHomeState extends State<OverviewHome> {
 
   Future<void> _loadExpense() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
-    List<Map<String, String>> expenseItemLoad =
-        await _service.fetchDataForMonthEachDay(userId, DateTime.now(), 'outcome');
+    List<Map<String, String>> expenseItemLoad = await _service
+        .fetchDataForMonthEachDay(userId, DateTime.now(), 'outcome', );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
@@ -86,10 +90,12 @@ class _OverviewHomeState extends State<OverviewHome> {
   @override
   void initState() {
     super.initState();
-    _loadTotalIncome(); // Gọi hàm load total income
-    _loadTotalExpense(); // Gọi hàm load total expense
-    _loadExpense();
-    _loadIncome();
+    if (isLogined == true) {
+      _loadTotalIncome(); // Gọi hàm load total income
+      _loadTotalExpense(); // Gọi hàm load total expense
+      _loadExpense();
+      _loadIncome();
+    }
   }
 
   //Xử lý phần view 2
@@ -111,76 +117,42 @@ class _OverviewHomeState extends State<OverviewHome> {
   void signUserOut() {
     FirebaseAuth.instance.signOut();
     UserStorage.userId = "";
+    isLogined = false;
   }
 
-  void goToTotalExpense() {
+  void goToTotalExpense() async {
     print("Navigating to Total Expense");
-    Navigator.push(
+    final update = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const TotalExpense()),
     );
+    if (update == true) {
+      // Gọi lại các phương thức để cập nhật lại dữ liệu thu nhập
+      setState(() {
+        _totalExpense = totalExpenseGL; 
+        _totalIncome = totalIncomeGL; 
+        _loadExpense(); // Gọi hàm load expense
+        _loadIncome(); // Gọi hàm load income
+      });
+    }
   }
 
-  void goToTotalIncome() {
+  void goToTotalIncome() async {
     print("Navigating to Total Expense");
-    Navigator.push(
+    final update = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const TotalIncome()),
     );
+    if (update == true) {
+      // Gọi lại các phương thức để cập nhật lại dữ liệu thu nhập
+      setState(() {
+        _loadTotalIncome(); // Gọi hàm load total income
+        _loadTotalExpense(); // Gọi hàm load total expense
+        _loadExpense(); // Gọi hàm load expense
+        _loadIncome(); // Gọi hàm load income
+      });
+    }
   }
-
-
-  // Dữ liệu mẫu cho các danh sách
-  final List<List<Map<String, String>>> lists = [
-    [
-      {
-        "title": "Food",
-        "date": "20 Feb 2024",
-        "amount": "+ \$20 + Vat 0.5%",
-        "payment": "Google Pay"
-      },
-      {
-        "title": "Uber",
-        "date": "13 Mar 2024",
-        "amount": "- \$18 + Vat 0.8%",
-        "payment": "Cash"
-      },
-      {
-        "title": "Shopping",
-        "date": "11 Mar 2024",
-        "amount": "- \$400 + Vat 0.12%",
-        "payment": "Paytm"
-      },
-    ],
-    [
-      {
-        "title": "Water Bill",
-        "date": "10 Jan 2024",
-        "amount": "- \$50",
-        "payment": "Credit Card"
-      },
-      {
-        "title": "Electricity",
-        "date": "25 Jan 2024",
-        "amount": "- \$100",
-        "payment": "Direct Debit"
-      },
-    ],
-    [
-      {
-        "title": "Income",
-        "date": "01 Mar 2024",
-        "amount": "+ \$1000",
-        "payment": "Bank Transfer"
-      },
-      {
-        "title": "Bonus",
-        "date": "05 Mar 2024",
-        "amount": "+ \$500",
-        "payment": "Bank Transfer"
-      },
-    ],
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -370,6 +342,7 @@ class _OverviewHomeState extends State<OverviewHome> {
                 const SizedBox(height: 20),
                 Expanded(
                   child: ListView.builder(
+                    reverse: true,
                     itemCount: getSelectedItems(selectedIndex).length,
                     itemBuilder: (context, index) {
                       final entry = getSelectedItems(selectedIndex)[index];

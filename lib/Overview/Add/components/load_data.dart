@@ -124,4 +124,6 @@ Future<List<Map<String, String>>> fetchDataForMonthEachDay(
     final formatCurrency = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
     return formatCurrency.format(amount);
   }
+
+  
 }

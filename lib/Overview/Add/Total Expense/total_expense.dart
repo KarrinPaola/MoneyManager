@@ -1,3 +1,5 @@
+import 'package:back_up/check_fetch_data.dart';
+import 'package:back_up/check_login.dart';
 import 'package:back_up/userID_Store.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:back_up/Overview/Add/Total%20Expense/add_expense.dart';
@@ -20,22 +22,24 @@ class _TotalExpenseState extends State<TotalExpense> {
   final Service _service = Service();
   double _totalExpense = 0;
   List<Map<String, String>> _expenseItems = [];
+  bool updateTotal = false;
 
   Future<void> _loadTotalExpense() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
     double total =
-        await _service.fetchDataForMonth(userId, _selectedDay!, 'outcome');
+        await _service.fetchDataForMonth(userId, _selectedDay!, 'outcome', );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
       _totalExpense = total;
+      totalExpenseGL = _totalExpense; 
     });
   }
 
   Future<void> _loadExpense() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
     List<Map<String, String>> expenseItemLoad =
-        await _service.fetchDataForDay(userId, _selectedDay!, 'outcome');
+        await _service.fetchDataForDay(userId, _selectedDay!, 'outcome', );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
@@ -43,12 +47,16 @@ class _TotalExpenseState extends State<TotalExpense> {
     });
   }
 
+  void backToHome() {
+    Navigator.pop(context, true);
+  }
+
   @override
   void initState() {
     super.initState();
     _selectedDay = _focusedDay;
     _loadExpense(); // Lấy dữ liệu thu nhập cho ngày hiện tại
-    _loadTotalExpense();
+    _totalExpense = totalExpenseGL; 
   }
 
   // Phương thức để load thu nhập cho ngày đã chọn
@@ -57,7 +65,7 @@ class _TotalExpenseState extends State<TotalExpense> {
       _selectedDay = day;
     });
     _loadExpense();
-    _loadTotalExpense();
+
   }
 
   void goToAddExpense() async {
@@ -70,6 +78,7 @@ class _TotalExpenseState extends State<TotalExpense> {
       setState(() {
         _loadExpense();
         _loadTotalExpense();
+        updateTotal = update;
       });
     }
   }
@@ -83,6 +92,14 @@ class _TotalExpenseState extends State<TotalExpense> {
       appBar: AppBar(
         backgroundColor: const Color(0xffffffff),
         title: const Text('Total Expense'),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back), // Thay mũi tên bằng một icon khác
+          onPressed: () {
+            // Hành động khi nhấn vào icon
+            backToHome();
+          },
+        ),
       ),
       body: Column(
         children: [

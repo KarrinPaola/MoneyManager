@@ -55,6 +55,14 @@ class _AddIncomeState extends State<AddIncome> {
           'Add Income',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back), // Thay mũi tên bằng một icon khác
+          onPressed: () {
+            // Hành động khi nhấn vào icon
+            backToTotalIncome();
+          },
+        ),
       ),
       body: Column(
         children: [
@@ -203,7 +211,7 @@ class _AddIncomeState extends State<AddIncome> {
           ),
           const SizedBox(height: 10),
           FutureBuilder<List<String>>(
-            future: fetchTagsFromDatabase(),
+            future: fetchTagsFromDatabase("tag"),
             builder:
                 (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
               if (snapshot.hasError) {

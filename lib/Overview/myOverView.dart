@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:back_up/Overview/Saving/screen/screens/savings_home_screen.dart';
+import 'package:back_up/Overview/Saving/screen/saving_homescreens.dart';
 import 'package:flutter/material.dart';
 
 import 'Add/Total Expense/add_expense.dart';
@@ -23,7 +23,7 @@ class _MyOverviewState extends State<MyOverview> {
 
   static final List<Widget> _widgetList = <Widget>[
     const OverviewHome(),
-    const SavingsHomeScreen(),
+    const SavingHomescreens(),
     const OverviewNotification(),
     const OverviewSetReminder()
   ];
@@ -67,7 +67,7 @@ class _MyOverviewState extends State<MyOverview> {
                   iconSize: 30,
                 ),
                 IconButton(
-                  onPressed: () => _onItemTapped(1),
+                  onPressed: () => _onItemTapped(2),
                   icon: Icon(Icons.savings,
                       color: _selectedTab == 1
                           ? const Color(0xFF1e42f9)
