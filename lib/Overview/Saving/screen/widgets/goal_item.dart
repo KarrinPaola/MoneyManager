@@ -9,22 +9,10 @@ class GoalItem extends StatelessWidget {
   Widget build(BuildContext context) {
     double progress = goal['saved'] / goal['goal'];
 
-    // Lựa chọn icon dựa trên tên mục tiêu
-    IconData icon;
-    if (goal['name'] == 'New Bike') {
-      icon = Icons.directions_bike; // Icon bike
-    } else if (goal['name'] == 'Iphone 15 Pro') {
-      icon = Icons.phone_iphone; // Icon điện thoại
-    } else {
-      icon = Icons.help_outline; // Icon mặc định nếu không khớp
-    }
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          // Hiển thị icon mục tiêu
-          Icon(icon, size: 40, color: Colors.black54),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -33,7 +21,8 @@ class GoalItem extends StatelessWidget {
                 // Hiển thị tên mục tiêu
                 Text(
                   goal['name'],
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 5),
                 // Thanh tiến độ

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/goal_item.dart';
+import 'add_money_screen.dart'; // Import màn hình AddMoneyScreen
 
 class GoalsScreen extends StatelessWidget {
   const GoalsScreen({super.key});
@@ -36,7 +37,28 @@ class GoalsScreen extends StatelessWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
-        children: allGoals.map((goal) => GoalItem(goal: goal)).toList(),
+        children: allGoals.map((goal) {
+          return GestureDetector(
+            onTap: () {
+              // Tạo TextEditingController trước khi chuyển đến AddMoneyScreen
+              TextEditingController amountController = TextEditingController();
+
+              // Chuyển đến màn hình AddMoneyScreen và truyền dữ liệu cần thiết
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddMoneyScreen(
+                    goalName: goal['name'] as String,
+                    currentSaved: goal['saved'] as double,
+                    goalAmount: goal['goal'] as double,
+                    amountController: amountController, // Truyền TextEditingController
+                  ),
+                ),
+              );
+            },
+            child: GoalItem(goal: goal), // Hiển thị chi tiết mục tiêu
+          );
+        }).toList(),
       ),
     );
   }
