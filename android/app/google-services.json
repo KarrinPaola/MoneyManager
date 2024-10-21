@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1062347283966:android:d97a95369b3a3d697634af",
         "android_client_info": {
-          "package_name": "com.example.app"
+          "package_name": "com.example.back_up"
         }
       },
       "oauth_client": [
@@ -34,7 +34,7 @@
               "client_id": "1062347283966-50qqfnjt34eu4h366hmlaqcr1g3ti8f3.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.backUp"
+                "bundle_id": "com.example.back_up"
               }
             }
           ]
