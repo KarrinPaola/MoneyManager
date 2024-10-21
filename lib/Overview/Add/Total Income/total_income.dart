@@ -1,3 +1,4 @@
+import 'package:back_up/Overview/Add/components/pie_chart_with_map.dart';
 import 'package:back_up/check_fetch_data.dart';
 import 'package:back_up/check_login.dart';
 import 'package:back_up/userID_Store.dart';
@@ -22,24 +23,31 @@ class _TotalIncomeState extends State<TotalIncome> {
   final Service _service = Service();
   double _totalIncome = 0;
   List<Map<String, String>> _incomeItems = [];
-  bool updateTotal = false; 
+  bool updateTotal = false;
+  Map<String, double> incomeByTag = {};
 
   Future<void> _loadTotalIncome() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
-    double total =
-        await _service.fetchDataForMonth(userId, _selectedDay!, 'income',);
+    double total = await _service.fetchDataForMonth(
+      userId,
+      _selectedDay!,
+      'income',
+    );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
       _totalIncome = total;
-      totalIncomeGL = _totalIncome; 
+      totalIncomeGL = _totalIncome;
     });
   }
 
   Future<void> _loadIncome() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
-    List<Map<String, String>> incomeItemLoad =
-        await _service.fetchDataForDay(userId, _selectedDay!, 'income',);
+    List<Map<String, String>> incomeItemLoad = await _service.fetchDataForDay(
+      userId,
+      _selectedDay!,
+      'income',
+    );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
@@ -47,14 +55,22 @@ class _TotalIncomeState extends State<TotalIncome> {
     });
   }
 
-  
+  Future<void> _loadDataOrderByTag() async {
+    String? userId = UserStorage.userId;
+    Map<String, double> itemLoaded = await _service.fetchMonthlyIncomeByTag(
+        userId!, _selectedDay!, 'tagIncome', 'income');
+    setState(() {
+      incomeByTag = itemLoaded;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _selectedDay = _focusedDay;
     _loadIncome(); // Lấy dữ liệu thu nhập cho ngày hiện tại
-    _totalIncome = totalIncomeGL; 
+    _totalIncome = totalIncomeGL;
+    _loadDataOrderByTag();
   }
 
   // Phương thức để load thu nhập cho ngày đã chọn
@@ -63,10 +79,13 @@ class _TotalIncomeState extends State<TotalIncome> {
       _selectedDay = day;
     });
     _loadIncome();
+    _loadDataOrderByTag();
   }
-  void backToHome(){
+
+  void backToHome() {
     Navigator.pop(context, true);
   }
+
   void goToAddIncome() async {
     final update = await Navigator.push(
       context,
@@ -78,6 +97,7 @@ class _TotalIncomeState extends State<TotalIncome> {
         _loadIncome();
         _loadTotalIncome();
         updateTotal = update;
+        _loadDataOrderByTag();
       });
     }
   }
@@ -88,7 +108,12 @@ class _TotalIncomeState extends State<TotalIncome> {
       backgroundColor: const Color(0xFFedeff1),
       appBar: AppBar(
         backgroundColor: const Color(0xffffffff),
-        title: const Text('Total Income'),
+        title: const Text(
+          'Tổng ngân sách',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: Icon(Icons.arrow_back), // Thay mũi tên bằng một icon khác
@@ -109,6 +134,7 @@ class _TotalIncomeState extends State<TotalIncome> {
               borderRadius: BorderRadius.circular(30),
             ),
             child: TableCalendar(
+              locale: 'vi_VN',
               firstDay: DateTime.utc(2020, 1, 1),
               lastDay: DateTime.utc(2030, 12, 31),
               focusedDay: _focusedDay,
@@ -166,7 +192,7 @@ class _TotalIncomeState extends State<TotalIncome> {
           ),
           const SizedBox(height: 10),
           const Text(
-            'You try so hard to make this money.\n Keep going!',
+            'Bạn đã cố gắng rất nhiều để có số tiền này.\n Cố lên nào!',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 15,
@@ -194,8 +220,8 @@ class _TotalIncomeState extends State<TotalIncome> {
                       unselectedLabelColor: Colors.grey,
                       indicatorColor: Color(0xFF1e42f9),
                       tabs: [
-                        Tab(text: 'Incomes'),
-                        Tab(text: 'Categories'),
+                        Tab(text: 'Thu nhập'),
+                        Tab(text: 'Phân loại'),
                       ],
                     ),
                     Expanded(
@@ -217,9 +243,13 @@ class _TotalIncomeState extends State<TotalIncome> {
                                   },
                                 )
                               : const Center(
-                                  child: Text('No incomes for this day')),
+                                  child: Text(
+                                      'Không có khoản thu nào trong hôm nay')),
                           // Tab Categories (Chưa có nội dung)
-                          const Center(child: Text('No Categories available')),
+                          ListView(children: [
+                            Center(
+                                child: PieChartWithMap(incomeByTag: incomeByTag)),
+                          ]),
                         ],
                       ),
                     ),
@@ -254,7 +284,7 @@ class _TotalIncomeState extends State<TotalIncome> {
                   color: const Color(0xFF1e42f9),
                 ),
                 child: const Text(
-                  "Add Income",
+                  "Thêm ngân sách",
                   style: TextStyle(
                     color: Color(0xffffffff),
                     fontWeight: FontWeight.bold,

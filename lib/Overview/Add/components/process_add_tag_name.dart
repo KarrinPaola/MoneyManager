@@ -6,6 +6,7 @@ import '../../../userID_Store.dart';
 Future<void> Process_Add_Tag(
   BuildContext context,
   VoidCallback onTagAdded, // Thêm callback
+  String nameCollectionTag,
 ) async {
   TextEditingController newTagController = TextEditingController();
 
@@ -37,7 +38,7 @@ Future<void> Process_Add_Tag(
                     .collection('users')
                     .doc(UserStorage.userId);
                 try {
-                  await userDocRef.collection('tag').doc(newTag).set({
+                  await userDocRef.collection(nameCollectionTag).doc(newTag).set({
                     'tag': newTag,
                   });
                   print('Tag added to Firebase: $newTag');

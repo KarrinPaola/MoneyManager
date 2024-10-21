@@ -52,7 +52,7 @@ class _AddExpenseState extends State<AddExpense> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
-          'Add Expense',
+          'Thêm khoản chi',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         automaticallyImplyLeading: false,
@@ -135,7 +135,7 @@ class _AddExpenseState extends State<AddExpense> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Expense Title',
+                  'Mục đích chi',
                   style: TextStyle(
                     color: Color(0xFF9ba1a8),
                     fontWeight: FontWeight.bold,
@@ -149,7 +149,7 @@ class _AddExpenseState extends State<AddExpense> {
             height: 10,
           ),
           MyTextField(
-            hintText: 'How you get this money',
+            hintText: 'Bạn chi số tiền này để làm gì?',
             obscureText: false,
             controller: titleController,
           ),
@@ -162,7 +162,7 @@ class _AddExpenseState extends State<AddExpense> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Amount',
+                  'Số lượng',
                   style: TextStyle(
                     color: Color(0xFF9ba1a8),
                     fontWeight: FontWeight.bold,
@@ -176,7 +176,7 @@ class _AddExpenseState extends State<AddExpense> {
             height: 10,
           ),
           NumberTextfield(
-            hintText: 'How much',
+            hintText: 'Bạn chi bao nhiêu tiền?',
             suffixIcon: CupertinoIcons.money_dollar,
             obscureText: false,
             controller: moneyController,
@@ -188,7 +188,7 @@ class _AddExpenseState extends State<AddExpense> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Expense Category',
+                  'Các nhãn chi phí',
                   style: TextStyle(
                     color: Color(0xFF9ba1a8),
                     fontWeight: FontWeight.bold,
@@ -197,12 +197,12 @@ class _AddExpenseState extends State<AddExpense> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Process_Add_Tag(context, _reloadTags);
+                    Process_Add_Tag(context, _reloadTags, 'tagOutcome');
                   },
                   child: const Row(
                     children: [
                       Icon(Icons.add),
-                      Text("Add Tag"),
+                      Text("Thêm nhãn"),
                     ],
                   ),
                 ),
@@ -211,13 +211,13 @@ class _AddExpenseState extends State<AddExpense> {
           ),
           const SizedBox(height: 10),
           FutureBuilder<List<String>>(
-            future: fetchTagsFromDatabase("tag"),
+            future: fetchTagsFromDatabase("tagOutcome"),
             builder:
                 (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
               if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('No tags found.'));
+                return const Center(child: Text('Không tìm thấy nhãn.'));
               }
 
               List<String> tags = snapshot.data!;
@@ -293,15 +293,15 @@ class _AddExpenseState extends State<AddExpense> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text("Add Expense Successful"),
-                        content: const Text("What would you like to do next?"),
+                        title: const Text("Thêm khoản chi thành công!"),
+                        content: const Text("Bạn muốn làm gì tiếp theo?"),
                         actions: [
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop(); // Đóng dialog
                               backToTotalExpense(); // Quay về màn hình trước
                             },
-                            child: const Text("Back to Home"),
+                            child: const Text("Về trang chủ"),
                           ),
                           TextButton(
                             onPressed: () {
@@ -314,7 +314,7 @@ class _AddExpenseState extends State<AddExpense> {
                                 _selectedDay = DateTime.now();
                               });
                             },
-                            child: const Text("Add More"),
+                            child: const Text("Thêm mới"),
                           ),
                         ],
                       );
@@ -323,7 +323,7 @@ class _AddExpenseState extends State<AddExpense> {
                 } else {
                   // Handle validation error (e.g., show a Snackbar)
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please fill all fields')),
+                    const SnackBar(content: Text('Hãy nhập đầy đủ các thông tin!')),
                   );
                 }
               },

@@ -78,52 +78,109 @@ class Service {
     return data;
   }
 
+  Future<List<Map<String, String>>> fetchDataForMonthEachDay(
+      String? userId, DateTime date, String tableName) async {
+    final userDocRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+    print('Fetching $tableName data for month: ${date.month}/${date.year}');
 
-Future<List<Map<String, String>>> fetchDataForMonthEachDay(
-    String? userId, DateTime date, String tableName) async {
-  final userDocRef = FirebaseFirestore.instance.collection('users').doc(userId);
-  print('Fetching $tableName data for month: ${date.month}/${date.year}');
+    List<Map<String, String>> data = [];
 
-  List<Map<String, String>> data = [];
+    try {
+      // Lấy ngày đầu tiên và ngày cuối cùng của tháng
+      DateTime startDate = DateTime(date.year, date.month, 1, 0, 0, 0);
+      DateTime endDate = DateTime(date.year, date.month + 1, 0, 23, 59, 59);
 
-  try {
-    // Lấy ngày đầu tiên và ngày cuối cùng của tháng
-    DateTime startDate = DateTime(date.year, date.month, 1, 0, 0, 0);
-    DateTime endDate = DateTime(date.year, date.month + 1, 0, 23, 59, 59);
+      QuerySnapshot dataSnapshot = await userDocRef
+          .collection(tableName)
+          .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+          .where('date', isLessThanOrEqualTo: Timestamp.fromDate(endDate))
+          .get();
 
-    QuerySnapshot dataSnapshot = await userDocRef
-        .collection(tableName)
-        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
-        .where('date', isLessThanOrEqualTo: Timestamp.fromDate(endDate))
-        .get();
+      // Định dạng ngày
+      DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 
-    // Định dạng ngày
-    DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+      for (var doc in dataSnapshot.docs) {
+        // Lấy timestamp từ Firestore và chuyển thành DateTime
+        Timestamp timestamp = doc['date'];
+        DateTime docDate = timestamp.toDate();
 
-    for (var doc in dataSnapshot.docs) {
-      // Lấy timestamp từ Firestore và chuyển thành DateTime
-      Timestamp timestamp = doc['date'];
-      DateTime docDate = timestamp.toDate();
-
-      data.add({
-        'title': doc['title'],
-        'amount': formatCurrency((doc['amount'] as num).toDouble()), // Định dạng thu nhập
-        'tag': doc['tag'],
-        'date': dateFormat.format(docDate), // Định dạng ngày thành dd/MM/yyyy
-      });
+        data.add({
+          'title': doc['title'],
+          'amount': formatCurrency(
+              (doc['amount'] as num).toDouble()), // Định dạng thu nhập
+          'tag': doc['tag'],
+          'date': dateFormat.format(docDate), // Định dạng ngày thành dd/MM/yyyy
+        });
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
     }
-  } catch (e) {
-    print('Error fetching data: $e');
+
+    return data;
   }
 
-  return data;
-}
+  Future<Map<String, double>> fetchMonthlyIncomeByTag(
+      String userId,
+      DateTime selectedDate,
+      String tagCollection,
+      String incomeCollection) async {
+    final startDate =
+        DateTime(selectedDate.year, selectedDate.month, 1); // Ngày đầu tháng
+    final endDate = DateTime(
+        selectedDate.year, selectedDate.month + 1, 1); // Ngày đầu tháng sau
+
+    // Lấy income cho tháng được chỉ định
+    final incomeSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection(incomeCollection)
+        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+        .where('date', isLessThan: Timestamp.fromDate(endDate))
+        .get();
+
+    // Lấy tagIncome
+    final tagSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection(tagCollection)
+        .get();
+
+    Map<String, double> incomeByTag = {};
+    double totalIncome = 0; // Tổng thu nhập cho tháng
+
+    // Tạo danh sách các tag
+    List<String> tags =
+        tagSnapshot.docs.map((doc) => doc['tag'] as String).toList();
+
+    // Tính tổng thu nhập và thu nhập cho từng tag
+    for (var doc in incomeSnapshot.docs) {
+      final data = doc.data();
+      final tag = data['tag'] ?? 'unknown';
+      final amount = (data['amount'] as num).toDouble();
+
+      totalIncome += amount; // Cộng vào tổng thu nhập
+
+      if (tags.contains(tag)) {
+        if (incomeByTag.containsKey(tag)) {
+          incomeByTag[tag] = incomeByTag[tag]! + amount;
+        } else {
+          incomeByTag[tag] = amount;
+        }
+      }
+    }
+
+    // Nếu tổng thu nhập > 0 thì tính phần trăm cho từng tag
+    if (totalIncome > 0) {
+      incomeByTag.updateAll((tag, income) => (income / totalIncome) * 100);
+    }
+
+    return incomeByTag; // Trả về map chứa phần trăm thu nhập cho từng tag
+  }
 
   // Hàm định dạng số tiền thành chuỗi tiền tệ Việt Nam Đồng
   String formatCurrency(double amount) {
     final formatCurrency = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
     return formatCurrency.format(amount);
   }
-
-  
 }

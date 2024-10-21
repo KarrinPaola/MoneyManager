@@ -52,7 +52,7 @@ class _AddIncomeState extends State<AddIncome> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
-          'Add Income',
+          'Thêm ngân sách',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         automaticallyImplyLeading: false,
@@ -74,6 +74,7 @@ class _AddIncomeState extends State<AddIncome> {
               borderRadius: BorderRadius.circular(30),
             ),
             child: TableCalendar(
+              locale: 'vi_VN',
               firstDay: DateTime.utc(2020, 1, 1),
               lastDay: DateTime.utc(2030, 12, 31),
               focusedDay: _focusedDay,
@@ -91,6 +92,14 @@ class _AddIncomeState extends State<AddIncome> {
               headerStyle: HeaderStyle(
                 formatButtonVisible: false,
                 titleCentered: true,
+                titleTextFormatter: (date, locale) {
+                  String formattedDate = DateFormat.yMMMM(locale).format(date);
+                  // In hoa ký tự "T" đầu tiên của tháng
+                  return formattedDate.replaceFirst(
+                    formattedDate[0],
+                    formattedDate[0].toUpperCase(),
+                  );
+                },
                 leftChevronIcon: Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black), // Thêm border
@@ -135,7 +144,7 @@ class _AddIncomeState extends State<AddIncome> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Income Title',
+                  'Nguồn ngân sách',
                   style: TextStyle(
                     color: Color(0xFF9ba1a8),
                     fontWeight: FontWeight.bold,
@@ -149,7 +158,7 @@ class _AddIncomeState extends State<AddIncome> {
             height: 10,
           ),
           MyTextField(
-            hintText: 'How you get this money',
+            hintText: 'Ngân sách này từ đâu mà có?',
             obscureText: false,
             controller: titleController,
           ),
@@ -162,7 +171,7 @@ class _AddIncomeState extends State<AddIncome> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Amount',
+                  'Số lượng',
                   style: TextStyle(
                     color: Color(0xFF9ba1a8),
                     fontWeight: FontWeight.bold,
@@ -176,8 +185,8 @@ class _AddIncomeState extends State<AddIncome> {
             height: 10,
           ),
           NumberTextfield(
-            hintText: 'How much',
-            suffixIcon: CupertinoIcons.money_dollar,
+            hintText: 'Số tiền là bao nhiêu?',
+            suffixIcon: IconData(0x20AB, fontFamily: 'Roboto'),
             obscureText: false,
             controller: moneyController,
           ),
@@ -188,7 +197,7 @@ class _AddIncomeState extends State<AddIncome> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Income Category',
+                  'Các nhãn ngân sách',
                   style: TextStyle(
                     color: Color(0xFF9ba1a8),
                     fontWeight: FontWeight.bold,
@@ -197,12 +206,12 @@ class _AddIncomeState extends State<AddIncome> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Process_Add_Tag(context, _reloadTags);
+                    Process_Add_Tag(context, _reloadTags, 'tagIncome');
                   },
                   child: const Row(
                     children: [
                       Icon(Icons.add),
-                      Text("Add Tag"),
+                      Text("Thêm nhãn"),
                     ],
                   ),
                 ),
@@ -211,13 +220,13 @@ class _AddIncomeState extends State<AddIncome> {
           ),
           const SizedBox(height: 10),
           FutureBuilder<List<String>>(
-            future: fetchTagsFromDatabase("tag"),
+            future: fetchTagsFromDatabase("tagIncome"),
             builder:
                 (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
               if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('No tags found.'));
+                return const Center(child: Text('Không tìm thấy nhãn.'));
               }
 
               List<String> tags = snapshot.data!;
@@ -293,15 +302,15 @@ class _AddIncomeState extends State<AddIncome> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text("Add Income Successful"),
-                        content: const Text("What would you like to do next?"),
+                        title: const Text("Thêm ngân sách thành công!"),
+                        content: const Text("Bạn muốn làm gì tiếp theo?"),
                         actions: [
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop(); // Đóng dialog
                               backToTotalIncome(); // Quay về màn hình trước
                             },
-                            child: const Text("Back to Home"),
+                            child: const Text("Về trang chủ"),
                           ),
                           TextButton(
                             onPressed: () {
@@ -314,7 +323,7 @@ class _AddIncomeState extends State<AddIncome> {
                                 _selectedDay = DateTime.now();
                               });
                             },
-                            child: const Text("Add More"),
+                            child: const Text("Thêm mới"),
                           ),
                         ],
                       );
@@ -323,7 +332,8 @@ class _AddIncomeState extends State<AddIncome> {
                 } else {
                   // Handle validation error (e.g., show a Snackbar)
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please fill all fields')),
+                    const SnackBar(
+                        content: Text('Hãy nhập đầy đủ các thông tin!')),
                   );
                 }
               },
@@ -334,7 +344,7 @@ class _AddIncomeState extends State<AddIncome> {
                     borderRadius: BorderRadius.circular(50),
                     color: const Color(0xFF1e42f9)),
                 child: const Text(
-                  "Confirm",
+                  "Xác nhận",
                   style: TextStyle(
                     color: Color(0xffffffff),
                     fontWeight: FontWeight.bold,

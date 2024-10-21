@@ -17,7 +17,7 @@ class Forgotpasswordbuttom extends StatelessWidget {
         ),
         child: const Center(
           child: Text(
-            'FORGOT PASSWORD',
+            'QUÊN MẬT KHẨU',
             style: TextStyle(
               color: Color(0xFF9ba1a8),
               fontWeight: FontWeight.bold,

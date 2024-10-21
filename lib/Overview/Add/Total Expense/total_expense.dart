@@ -1,13 +1,14 @@
 import 'package:back_up/check_fetch_data.dart';
-import 'package:back_up/check_login.dart';
+
 import 'package:back_up/userID_Store.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:back_up/Overview/Add/Total%20Expense/add_expense.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import '../components/items.dart';
 import '../components/load_data.dart';
+import '../components/pie_chart_with_map.dart';
 
 class TotalExpense extends StatefulWidget {
   const TotalExpense({super.key});
@@ -23,27 +24,43 @@ class _TotalExpenseState extends State<TotalExpense> {
   double _totalExpense = 0;
   List<Map<String, String>> _expenseItems = [];
   bool updateTotal = false;
+  Map<String, double> outcomeByTag = {};
 
   Future<void> _loadTotalExpense() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
-    double total =
-        await _service.fetchDataForMonth(userId, _selectedDay!, 'outcome', );
+    double total = await _service.fetchDataForMonth(
+      userId,
+      _selectedDay!,
+      'outcome',
+    );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
       _totalExpense = total;
-      totalExpenseGL = _totalExpense; 
+      totalExpenseGL = _totalExpense;
     });
   }
 
   Future<void> _loadExpense() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
-    List<Map<String, String>> expenseItemLoad =
-        await _service.fetchDataForDay(userId, _selectedDay!, 'outcome', );
+    List<Map<String, String>> expenseItemLoad = await _service.fetchDataForDay(
+      userId,
+      _selectedDay!,
+      'outcome',
+    );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
       _expenseItems = expenseItemLoad;
+    });
+  }
+
+  Future<void> _loadDataOrderByTag() async {
+    String? userId = UserStorage.userId;
+    Map<String, double> itemLoaded = await _service.fetchMonthlyIncomeByTag(
+        userId!, _selectedDay!, 'tagOutcome', 'outcome');
+    setState(() {
+      outcomeByTag = itemLoaded;
     });
   }
 
@@ -56,7 +73,8 @@ class _TotalExpenseState extends State<TotalExpense> {
     super.initState();
     _selectedDay = _focusedDay;
     _loadExpense(); // Lấy dữ liệu thu nhập cho ngày hiện tại
-    _totalExpense = totalExpenseGL; 
+    _totalExpense = totalExpenseGL;
+    _loadDataOrderByTag();
   }
 
   // Phương thức để load thu nhập cho ngày đã chọn
@@ -65,7 +83,7 @@ class _TotalExpenseState extends State<TotalExpense> {
       _selectedDay = day;
     });
     _loadExpense();
-
+    _loadDataOrderByTag();
   }
 
   void goToAddExpense() async {
@@ -79,6 +97,7 @@ class _TotalExpenseState extends State<TotalExpense> {
         _loadExpense();
         _loadTotalExpense();
         updateTotal = update;
+        _loadDataOrderByTag();
       });
     }
   }
@@ -91,7 +110,10 @@ class _TotalExpenseState extends State<TotalExpense> {
       backgroundColor: const Color(0xFFedeff1),
       appBar: AppBar(
         backgroundColor: const Color(0xffffffff),
-        title: const Text('Total Expense'),
+        title: const Text(
+          'Tổng chi phí',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: Icon(Icons.arrow_back), // Thay mũi tên bằng một icon khác
@@ -111,6 +133,7 @@ class _TotalExpenseState extends State<TotalExpense> {
               borderRadius: BorderRadius.circular(30),
             ),
             child: TableCalendar(
+              locale: 'vi_VN',
               firstDay: DateTime.utc(2020, 1, 1),
               lastDay: DateTime.utc(2030, 12, 31),
               focusedDay: _focusedDay,
@@ -168,7 +191,7 @@ class _TotalExpenseState extends State<TotalExpense> {
           ),
           const SizedBox(height: 10),
           const Text(
-            'You try so hard to make this money.\n Keep going!',
+            'Hãy cẩn thận với chi tiêu của mình!\nKhông cuối tháng trở thành địa ngục đó nha :)',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 15,
@@ -196,8 +219,8 @@ class _TotalExpenseState extends State<TotalExpense> {
                       unselectedLabelColor: Colors.grey,
                       indicatorColor: Color(0xFF1e42f9),
                       tabs: [
-                        Tab(text: 'Expenses'),
-                        Tab(text: 'Categories'),
+                        Tab(text: 'Chi phí'),
+                        Tab(text: 'Phân loại'),
                       ],
                     ),
                     Expanded(
@@ -219,9 +242,14 @@ class _TotalExpenseState extends State<TotalExpense> {
                                   },
                                 )
                               : const Center(
-                                  child: Text('No expenses for this day')),
+                                  child: Text(
+                                      'Không có khoản chi nào trong hôm nay')),
                           // Tab Categories (Chưa có nội dung)
-                          const Center(child: Text('No Categories available')),
+                          ListView(children: [
+                            Center(
+                                child:
+                                    PieChartWithMap(incomeByTag: outcomeByTag)),
+                          ]),
                         ],
                       ),
                     ),
@@ -256,7 +284,7 @@ class _TotalExpenseState extends State<TotalExpense> {
                   color: const Color(0xFF1e42f9),
                 ),
                 child: const Text(
-                  "Add Expense",
+                  "Thêm khoản chi",
                   style: TextStyle(
                     color: Color(0xffffffff),
                     fontWeight: FontWeight.bold,

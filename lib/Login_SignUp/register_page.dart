@@ -76,7 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          "Passwords do not match or registration error",
+                          "Mật khẩu không khớp hoặc lỗi đăng nhập!",
                           style: TextStyle(color: Color(0xFFB00020)),
                         ),
                       ),
@@ -96,7 +96,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               MyTextField(
                 controller: passwordController,
-                hintText: 'Password',
+                hintText: 'Mật khẩu',
                 obscureText: true,
                 prefixIcon: Icons.password,
                 statusLogin: stateRegister,
@@ -106,7 +106,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               MyTextField(
                 controller: reenterPasswordController,
-                hintText: 'Re-enter Password',
+                hintText: 'Nhập lại mật khẩu',
                 obscureText: true,
                 prefixIcon: Icons.password,
                 statusLogin: stateRegister,
@@ -122,7 +122,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       passwordController: passwordController,
                       reenterPasswordController: reenterPasswordController);
                 },
-                text: "REGISTER",
+                text: "ĐĂNG KÝ",
               ),
               const SizedBox(
                 height: 25,
@@ -130,7 +130,7 @@ class _RegisterPageState extends State<RegisterPage> {
               Container(
                 child: const Center(
                   child: Text(
-                    'Or',
+                    'Hoặc',
                     style: TextStyle(
                       color: Color(0xFF000000),
                       fontSize: 18,
@@ -161,14 +161,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "You have an account?",
+                    "Bạn đã có tài khoản?",
                     style: TextStyle(fontSize: 15, color: Color(0xFF000000)),
                   ),
                   const SizedBox(
                     width: 5,
                   ),
                   Textgesture(
-                    text: 'Login now',
+                    text: 'Đăng nhập ngay',
                     ontap: goToLogin,
                   )
                 ],

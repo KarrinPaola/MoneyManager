@@ -39,6 +39,7 @@ class _MyOverviewState extends State<MyOverview> {
     return Stack(
       children: [
         Scaffold(
+          backgroundColor: Colors.white,
           body: IndexedStack(
             index: _selectedTab,
             children: _widgetList,
@@ -123,8 +124,10 @@ class _MyOverviewState extends State<MyOverview> {
         if (_isMenuVisible)
           GestureDetector(
             onTap: () {
+
               setState(() {
-                _isMenuVisible = false; // Ẩn menu khi bấm ra ngoài
+                _isMenuVisible = false;
+                _selectedTab = 0; // Ẩn menu khi bấm ra ngoài
               });
             },
             child: BackdropFilter(

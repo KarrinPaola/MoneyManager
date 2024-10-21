@@ -42,6 +42,7 @@ class ButtonAdd extends StatelessWidget {
                   color: Color(0xffffffff),
                   fontSize: 15,
                   fontWeight: FontWeight.w900),
+                  
             ),
           ],
         ),

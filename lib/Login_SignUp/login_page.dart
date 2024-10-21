@@ -60,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
 
       // Đóng hộp thoại tải lên
       Navigator.pop(context);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const MyOverview()),);
 
     } on FirebaseAuthException catch (e) {
       print('Login Error: ${e.message}');
@@ -77,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Login Failed'),
+            title: const Text('Đăng nhập thất bại'),
             content: Text(e.message ?? 'An error occurred.'),
             actions: [
               TextButton(
@@ -145,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          "Incorrect username or password",
+                          "Sai mật khẩu hoặc tên đăng nhập",
                           style: TextStyle(color: Color(0xFFB00020)),
                         ),
                       ),
@@ -155,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 20),
               MyTextField(
                 controller: usernameController,
-                hintText: 'Username',
+                hintText: 'Tên đăng nhập hoặc gmail',
                 obscureText: false,
                 prefixIcon: Icons.person_2,
                 statusLogin: stateLogin,
@@ -165,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               MyTextField(
                 controller: passwordController,
-                hintText: 'Password',
+                hintText: 'Mật khẩu',
                 obscureText: true,
                 prefixIcon: Icons.password,
                 statusLogin: stateLogin,
@@ -175,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               MyButton(
                 onTap: signUserIn,
-                text: "LOGIN",
+                text: "ĐĂNG NHẬP",
               ),
               const SizedBox(
                 height: 25,
@@ -187,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 child: const Center(
                   child: Text(
-                    'Or',
+                    'Hoặc',
                     style: TextStyle(
                       color: Color(0xFF000000),
                       fontSize: 18,
@@ -212,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                 onTap: () async {
                   await loginWithGG(); // Gọi loginWithGG
                 },
-                imagePath: 'lib/Login_SignUp/Images/google.png',
+                imagePath: 'lib/Login_SignUp/Images/apple-logo.png',
                 brand: 'APPLE',
               ),
               const SizedBox(
@@ -222,14 +223,14 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Don't have an account?",
+                    "Bạn chưa có tài khoản?",
                     style: TextStyle(fontSize: 15, color: Color(0xFF000000)),
                   ),
                   const SizedBox(
                     width: 5,
                   ),
                   Textgesture(
-                    text: 'Register here',
+                    text: 'Đăng ký ngay',
                     ontap: goToRegister,
                   )
                 ],

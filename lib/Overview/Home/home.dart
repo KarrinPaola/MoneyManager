@@ -1,3 +1,4 @@
+import 'package:back_up/Login_SignUp/login_page.dart';
 import 'package:back_up/check_login.dart';
 import 'package:back_up/userID_Store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -44,31 +45,41 @@ class _OverviewHomeState extends State<OverviewHome> {
   Future<void> _loadTotalIncome() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
     double total = await _service.fetchDataForMonth(
-        userId, DateTime.now(), 'income', );
+      userId,
+      DateTime.now(),
+      'income',
+    );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
       _totalIncome = total;
-      totalIncomeGL = _totalIncome; 
+      totalIncomeGL = _totalIncome;
     });
   }
 
   Future<void> _loadTotalExpense() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
     double total = await _service.fetchDataForMonth(
-        userId, DateTime.now(), 'outcome', );
+      userId,
+      DateTime.now(),
+      'outcome',
+    );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
       _totalExpense = total;
-      totalExpenseGL = _totalExpense; 
+      totalExpenseGL = _totalExpense;
     });
   }
 
   Future<void> _loadIncome() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
-    List<Map<String, String>> incomeItemLoad = await _service
-        .fetchDataForMonthEachDay(userId, DateTime.now(), 'income', );
+    List<Map<String, String>> incomeItemLoad =
+        await _service.fetchDataForMonthEachDay(
+      userId,
+      DateTime.now(),
+      'income',
+    );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
@@ -78,8 +89,12 @@ class _OverviewHomeState extends State<OverviewHome> {
 
   Future<void> _loadExpense() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
-    List<Map<String, String>> expenseItemLoad = await _service
-        .fetchDataForMonthEachDay(userId, DateTime.now(), 'outcome', );
+    List<Map<String, String>> expenseItemLoad =
+        await _service.fetchDataForMonthEachDay(
+      userId,
+      DateTime.now(),
+      'outcome',
+    );
 
     // Cập nhật state để hiển thị tổng thu nhập mới
     setState(() {
@@ -114,10 +129,16 @@ class _OverviewHomeState extends State<OverviewHome> {
   }
 
   // Xử lý sign - out
-  void signUserOut() {
+  void signUserOut(BuildContext context) {
     FirebaseAuth.instance.signOut();
     UserStorage.userId = "";
     isLogined = false;
+
+    // Navigate back to the login page after signing out
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+      (route) => false,
+    );
   }
 
   void goToTotalExpense() async {
@@ -129,8 +150,8 @@ class _OverviewHomeState extends State<OverviewHome> {
     if (update == true) {
       // Gọi lại các phương thức để cập nhật lại dữ liệu thu nhập
       setState(() {
-        _totalExpense = totalExpenseGL; 
-        _totalIncome = totalIncomeGL; 
+        _totalExpense = totalExpenseGL;
+        _totalIncome = totalIncomeGL;
         _loadExpense(); // Gọi hàm load expense
         _loadIncome(); // Gọi hàm load income
       });
@@ -177,7 +198,10 @@ class _OverviewHomeState extends State<OverviewHome> {
                           color: Color(0xFF000000)),
                     ),
                     GestureDetector(
-                      onTap: signUserOut,
+                      onTap: () {
+                        signUserOut(
+                            context); // Gọi hàm signUserOut khi nhấn vào
+                      },
                       child: Container(
                         width: 50,
                         height: 50,
@@ -221,7 +245,7 @@ class _OverviewHomeState extends State<OverviewHome> {
               scrollDirection: Axis.horizontal,
               children: [
                 WalletTag(
-                  title: 'Total Income',
+                  title: 'Tổng ngân sách',
                   money: _service.formatCurrency(_totalIncome),
                   onTap: goToTotalIncome,
                   leftMargin: true,
@@ -231,7 +255,7 @@ class _OverviewHomeState extends State<OverviewHome> {
                   selectedWalletTag: selectedWalletTag,
                 ),
                 WalletTag(
-                  title: 'Total Expense',
+                  title: 'Tổng chi phí',
                   money: _service.formatCurrency(_totalExpense),
                   onTap: goToTotalExpense,
                   leftMargin: false,
@@ -241,7 +265,7 @@ class _OverviewHomeState extends State<OverviewHome> {
                   selectedWalletTag: selectedWalletTag,
                 ),
                 WalletTag(
-                  title: 'Total Monthly',
+                  title: 'Tháng này còn lại',
                   money: _service.formatCurrency(_totalIncome - _totalExpense),
                   onTap: () {},
                   leftMargin: false,
@@ -273,21 +297,21 @@ class _OverviewHomeState extends State<OverviewHome> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Custombutton(
-                      title: 'Expenses',
+                      title: 'Chi phí',
                       onTap: _onButtonPressed, // Pass the callback
                       iconData: Icons.savings,
                       index: 0, // Assign an index to each button
                       selectedIndex: selectedIndex,
                     ),
                     Custombutton(
-                      title: 'Reminds',
+                      title: 'Nhắc nhở',
                       onTap: _onButtonPressed,
                       iconData: Icons.notification_important,
                       index: 1,
                       selectedIndex: selectedIndex,
                     ),
                     Custombutton(
-                      title: 'Budgets',
+                      title: 'Ngân sách',
                       onTap: _onButtonPressed,
                       iconData: Icons.wallet,
                       index: 2,
@@ -315,7 +339,7 @@ class _OverviewHomeState extends State<OverviewHome> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Latest Entitries',
+                        'Các khoản gần đây...',
                         style: TextStyle(
                           color: Color(0xFF000000),
                           fontSize: 15,

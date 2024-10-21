@@ -32,7 +32,7 @@ class LoginWith extends StatelessWidget {
             ),
             Center(
               child: Text(
-                'CONTINUE WITH $brand',
+                'ĐĂNG NHẬP VỚI $brand',
                 style: const TextStyle(
                   color: Color(0xff000000),
                   fontWeight: FontWeight.bold,

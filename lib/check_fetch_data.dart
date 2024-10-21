@@ -1,5 +1,4 @@
-bool needToFetchIncome = false;
-bool needToFetchExpense = false;
+bool needToFetch = false; 
 
 double totalIncomeGL = 0;
 double totalExpenseGL = 0;

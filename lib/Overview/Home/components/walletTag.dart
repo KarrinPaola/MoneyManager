@@ -37,7 +37,7 @@ class _WalletTagState extends State<WalletTag> {
         widget.onTap2(widget.index);
       },
       child: Container(
-        width: 150,
+        width: 160,
         height: 150,
         margin: EdgeInsets.only(
             top: 10,
