@@ -67,7 +67,7 @@ class _MyOverviewState extends State<MyOverview> {
                   iconSize: 30,
                 ),
                 IconButton(
-                  onPressed: () => _onItemTapped(2),
+                  onPressed: () => _onItemTapped(1),
                   icon: Icon(Icons.savings,
                       color: _selectedTab == 1
                           ? const Color(0xFF1e42f9)
