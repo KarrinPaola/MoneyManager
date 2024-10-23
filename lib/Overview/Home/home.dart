@@ -27,7 +27,7 @@ class _OverviewHomeState extends State<OverviewHome> {
   double _totalExpense = 0;
   List<Map<String, String>> _incomeItems = [];
   List<Map<String, String>> _expenseItems = [];
-  List<Map<String, String>> _remindItems = [];
+  final List<Map<String, String>> _remindItems = [];
 
   List<Map<String, String>> getSelectedItems(int selectedIndex) {
     switch (selectedIndex) {
@@ -366,7 +366,6 @@ class _OverviewHomeState extends State<OverviewHome> {
                 const SizedBox(height: 20),
                 Expanded(
                   child: ListView.builder(
-                    reverse: true,
                     itemCount: getSelectedItems(selectedIndex).length,
                     itemBuilder: (context, index) {
                       final entry = getSelectedItems(selectedIndex)[index];

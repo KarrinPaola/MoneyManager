@@ -1,5 +1,4 @@
 import 'package:back_up/check_fetch_data.dart';
-import 'package:back_up/check_login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> Process_Add_In_Out(String userId, String title, double money,

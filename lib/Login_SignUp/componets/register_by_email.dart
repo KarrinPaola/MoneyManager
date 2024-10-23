@@ -108,7 +108,7 @@ Future<void> registerUser({
                 Navigator.pop(context); // Đóng hộp thoại thành công
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
                 ); // Điều hướng về trang đăng nhập
               },
               child: const Text('OK'),

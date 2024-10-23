@@ -7,7 +7,7 @@ class AddMoneyScreen extends StatelessWidget {
   final TextEditingController amountController; // Truyền từ bên ngoài
 
   // Chấp nhận TextEditingController từ bên ngoài để dễ dàng quản lý
-  AddMoneyScreen({
+  const AddMoneyScreen({
     super.key,
     required this.goalName,
     required this.currentSaved,

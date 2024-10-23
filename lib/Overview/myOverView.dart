@@ -39,7 +39,6 @@ class _MyOverviewState extends State<MyOverview> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: Colors.white,
           body: IndexedStack(
             index: _selectedTab,
             children: _widgetList,

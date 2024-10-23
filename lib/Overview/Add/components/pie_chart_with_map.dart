@@ -63,12 +63,12 @@ class PieChartWithMapState extends State<PieChartWithMap> {
   List<PieChartSectionData> showingSections() {
     final keys = widget.incomeByTag.keys.toList(); // Lấy danh sách keys từ incomeByTag
     final values = widget.incomeByTag.values.toList(); // Lấy danh sách values từ incomeByTag
-    final colors = Colors.primaries; // Sử dụng danh sách màu sắc mặc định
+    const colors = Colors.primaries; // Sử dụng danh sách màu sắc mặc định
 
     return List.generate(keys.length, (i) {
       // Bỏ tính năng chạm để phóng to
       const fontSize = 13.0; // Kích thước chữ cố định
-      const radius = 60.0; // Bán kính cố định
+      const radius = 50.0; // Bán kính cố định
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)]; // Đổ bóng cho chữ
 
       // Trả về dữ liệu cho từng phần của biểu đồ
@@ -95,11 +95,11 @@ class Indicator extends StatelessWidget {
   final bool isSquare; // Kiểu hình dáng
 
   const Indicator({
-    Key? key,
+    super.key,
     required this.color,
     required this.text,
     required this.isSquare,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
