@@ -7,6 +7,7 @@ import 'Add/Total Expense/add_expense.dart';
 import 'Add/Total Income/add_income.dart';
 import 'Home/home.dart';
 import 'Notification/notification.dart';
+import 'Saving/screen/screens/savings_home_screen.dart';
 import 'Set Reminder/ser_reminder.dart';
 import 'button_add.dart';
 
@@ -23,7 +24,7 @@ class _MyOverviewState extends State<MyOverview> {
 
   static final List<Widget> _widgetList = <Widget>[
     const OverviewHome(),
-    const SavingHomescreens(),
+    const SavingsHomeScreen(),
     const OverviewNotification(),
     const OverviewSetReminder()
   ];
