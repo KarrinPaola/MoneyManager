@@ -1,10 +1,10 @@
-import 'package:back_up/Login_SignUp/login_page.dart';
-import 'package:back_up/check_login.dart';
-import 'package:back_up/userID_Store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../Login_SignUp/login_page.dart';
 import '../../check_fetch_data.dart';
+import '../../check_login.dart';
+import '../../userID_Store.dart';
 import '../Add/Total Expense/total_expense.dart';
 import '../Add/Total Income/total_income.dart';
 import '../Add/components/load_data.dart';
@@ -179,59 +179,38 @@ class _OverviewHomeState extends State<OverviewHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFedeff1),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(10),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            color: Colors.white,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Overview',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Color(0xFF000000)),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        signUserOut(
-                            context); // Gọi hàm signUserOut khi nhấn vào
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          color: const Color(0xFF9ba1a8),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.only(left: 4),
-                          child: Icon(
-                            Icons.logout,
-                            color: Colors.white,
-                            size: 25,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.white,
+      //   automaticallyImplyLeading: false,
+      //   title: const Text(
+      //     'Tổng ngân sách',
+      //     style: TextStyle(
+      //       fontWeight: FontWeight.bold,
+      //     ),
+      //   ),
+      //   actions: [
+      //     IconButton(
+      //       icon: Icon(Icons.logout),
+      //       onPressed: () {
+      //         signUserOut(context);
+      //       },
+      //     ),
+      //   ],
+      // ),
       body: Column(
         children: [
+          SafeArea(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Text('Trang chủ', style: TextStyle(
+            
+                  ),)
+                ],
+              ),
+            ),
+          ),
           const SizedBox(
             height: 10,
           ),
@@ -279,9 +258,8 @@ class _OverviewHomeState extends State<OverviewHome> {
             ),
           ),
           Container(
-            
-            padding: const EdgeInsets.all(20),
-            height: MediaQuery.of(context).size.height / 1.95,
+            padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+            height: MediaQuery.of(context).size.height / 1.91,
             width: MediaQuery.of(context).size.width,
             decoration: const BoxDecoration(
                 color: Color(0xFFFFFFFF),
