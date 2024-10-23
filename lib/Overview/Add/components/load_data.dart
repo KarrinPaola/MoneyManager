@@ -1,4 +1,3 @@
-import 'package:back_up/userID_Store.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
@@ -105,7 +104,7 @@ class Service {
         Timestamp timestamp = doc['date'];
         DateTime docDate = timestamp.toDate();
 
-        data.add({
+        data.insert(0, {
           'title': doc['title'],
           'amount': formatCurrency(
               (doc['amount'] as num).toDouble()), // Định dạng thu nhập
@@ -121,62 +120,63 @@ class Service {
   }
 
   Future<Map<String, double>> fetchMonthlyIncomeByTag(
-      String userId,
-      DateTime selectedDate,
-      String tagCollection,
-      String incomeCollection) async {
-    final startDate =
-        DateTime(selectedDate.year, selectedDate.month, 1); // Ngày đầu tháng
-    final endDate = DateTime(
-        selectedDate.year, selectedDate.month + 1, 1); // Ngày đầu tháng sau
+    String userId,
+    DateTime selectedDate,
+    String tagCollection,
+    String incomeCollection) async {
+  final startDate = DateTime(selectedDate.year, selectedDate.month, 1); // Ngày đầu tháng
+  final endDate = DateTime(selectedDate.year, selectedDate.month + 1, 1); // Ngày đầu tháng sau
 
-    // Lấy income cho tháng được chỉ định
-    final incomeSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection(incomeCollection)
-        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
-        .where('date', isLessThan: Timestamp.fromDate(endDate))
-        .get();
+  // Lấy income cho tháng được chỉ định
+  final incomeSnapshot = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(userId)
+      .collection(incomeCollection)
+      .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+      .where('date', isLessThan: Timestamp.fromDate(endDate))
+      .get();
 
-    // Lấy tagIncome
-    final tagSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection(tagCollection)
-        .get();
+  // Lấy tagIncome
+  final tagSnapshot = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(userId)
+      .collection(tagCollection)
+      .get();
 
-    Map<String, double> incomeByTag = {};
-    double totalIncome = 0; // Tổng thu nhập cho tháng
+  Map<String, double> incomeByTag = {};
+  double totalIncome = 0.0;
 
-    // Tạo danh sách các tag
-    List<String> tags =
-        tagSnapshot.docs.map((doc) => doc['tag'] as String).toList();
+  // Tạo danh sách các tag
+  List<String> tags = tagSnapshot.docs.map((doc) => doc['tag'] as String).toList();
 
-    // Tính tổng thu nhập và thu nhập cho từng tag
-    for (var doc in incomeSnapshot.docs) {
-      final data = doc.data();
-      final tag = data['tag'] ?? 'unknown';
-      final amount = (data['amount'] as num).toDouble();
+  // Tính tổng thu nhập cho từng tag và tổng thu nhập
+  for (var doc in incomeSnapshot.docs) {
+    final data = doc.data();
+    final tag = data['tag'] ?? 'unknown';
+    final amount = (data['amount'] as num).toDouble();
 
-      totalIncome += amount; // Cộng vào tổng thu nhập
+    // Cộng dồn tổng thu nhập
+    totalIncome += amount;
 
-      if (tags.contains(tag)) {
-        if (incomeByTag.containsKey(tag)) {
-          incomeByTag[tag] = incomeByTag[tag]! + amount;
-        } else {
-          incomeByTag[tag] = amount;
-        }
+    if (tags.contains(tag)) {
+      if (incomeByTag.containsKey(tag)) {
+        incomeByTag[tag] = incomeByTag[tag]! + amount;
+      } else {
+        incomeByTag[tag] = amount;
       }
     }
-
-    // Nếu tổng thu nhập > 0 thì tính phần trăm cho từng tag
-    if (totalIncome > 0) {
-      incomeByTag.updateAll((tag, income) => (income / totalIncome) * 100);
-    }
-
-    return incomeByTag; // Trả về map chứa phần trăm thu nhập cho từng tag
   }
+
+  // Tính phần trăm cho từng tag
+  Map<String, double> incomePercentageByTag = {};
+  if (totalIncome > 0) {
+    incomeByTag.forEach((tag, amount) {
+      incomePercentageByTag[tag] = (amount / totalIncome) * 100; // Tính phần trăm
+    });
+  }
+
+  return incomePercentageByTag;
+}
 
   // Hàm định dạng số tiền thành chuỗi tiền tệ Việt Nam Đồng
   String formatCurrency(double amount) {

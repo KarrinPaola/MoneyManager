@@ -57,7 +57,7 @@ class _AddIncomeState extends State<AddIncome> {
         ),
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back), // Thay mũi tên bằng một icon khác
+          icon: const Icon(Icons.arrow_back), // Thay mũi tên bằng một icon khác
           onPressed: () {
             // Hành động khi nhấn vào icon
             backToTotalIncome();
@@ -186,7 +186,7 @@ class _AddIncomeState extends State<AddIncome> {
           ),
           NumberTextfield(
             hintText: 'Số tiền là bao nhiêu?',
-            suffixIcon: IconData(0x20AB, fontFamily: 'Roboto'),
+            suffixIcon: const IconData(0x20AB, fontFamily: 'Roboto'),
             obscureText: false,
             controller: moneyController,
           ),

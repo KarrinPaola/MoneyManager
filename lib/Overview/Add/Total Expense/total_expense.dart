@@ -116,7 +116,7 @@ class _TotalExpenseState extends State<TotalExpense> {
         ),
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back), // Thay mũi tên bằng một icon khác
+          icon: const Icon(Icons.arrow_back), // Thay mũi tên bằng một icon khác
           onPressed: () {
             // Hành động khi nhấn vào icon
             backToHome();
