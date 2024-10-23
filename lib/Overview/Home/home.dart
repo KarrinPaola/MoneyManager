@@ -185,6 +185,7 @@ class _OverviewHomeState extends State<OverviewHome> {
           preferredSize: const Size.fromHeight(10),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20),
+            color: Colors.white,
             child: Column(
               children: [
                 Row(
@@ -278,6 +279,7 @@ class _OverviewHomeState extends State<OverviewHome> {
             ),
           ),
           Container(
+            
             padding: const EdgeInsets.all(20),
             height: MediaQuery.of(context).size.height / 1.95,
             width: MediaQuery.of(context).size.width,
