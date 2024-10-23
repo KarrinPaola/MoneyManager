@@ -63,7 +63,7 @@ class Service {
           .get();
 
       for (var doc in dataSnapshot.docs) {
-        data.add({
+        data.insert(0,{
           'title': doc['title'],
           'amount': formatCurrency(
               (doc['amount'] as num).toDouble()), // Định dạng thu nhập

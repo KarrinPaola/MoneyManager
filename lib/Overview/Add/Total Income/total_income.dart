@@ -25,6 +25,7 @@ class _TotalIncomeState extends State<TotalIncome> {
   List<Map<String, String>> _incomeItems = [];
   bool updateTotal = false;
   Map<String, double> incomeByTag = {};
+        DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 
   Future<void> _loadTotalIncome() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
@@ -235,7 +236,7 @@ class _TotalIncomeState extends State<TotalIncome> {
                                   itemBuilder: (context, index) {
                                     return buildItem(
                                       _incomeItems[index]['title'] ?? '',
-                                      DateFormat('dd MMM yyyy')
+                                      DateFormat('dd/MM/yyyy')
                                           .format(_selectedDay!),
                                       _incomeItems[index]['amount'] ?? '',
                                       _incomeItems[index]['tag'] ?? '',

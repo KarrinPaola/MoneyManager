@@ -234,7 +234,7 @@ class _TotalExpenseState extends State<TotalExpense> {
                                   itemBuilder: (context, index) {
                                     return buildItem(
                                       _expenseItems[index]['title'] ?? '',
-                                      DateFormat('dd MMM yyyy')
+                                      DateFormat('dd/MM/yyyy')
                                           .format(_selectedDay!),
                                       _expenseItems[index]['amount'] ?? '',
                                       _expenseItems[index]['tag'] ?? '',
