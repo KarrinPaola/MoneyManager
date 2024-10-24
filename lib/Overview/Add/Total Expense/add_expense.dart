@@ -1,3 +1,4 @@
+import 'package:back_up/Overview/Add/components/load_data.dart';
 import 'package:back_up/Overview/Add/components/number_textField.dart';
 import 'package:back_up/Overview/Add/components/process_add_in_out.dart';
 import 'package:back_up/Overview/Add/components/process_add_tag_name.dart';
@@ -22,6 +23,7 @@ class _AddExpenseState extends State<AddExpense> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   var update = false;
+  Service _service = Service(); 
 
   void backToTotalExpense() {
     Navigator.pop(context, update);
@@ -238,6 +240,10 @@ class _AddExpenseState extends State<AddExpense> {
                                 tagNameSelected = tags[index];
                                 print(tagNameSelected);
                               });
+                            },
+                            onDelete: () {
+                              _service.deleteTag(UserStorage.userId, tags[index], 'tagOutcome');
+                              _reloadTags(); 
                             },
                           );
                         }),

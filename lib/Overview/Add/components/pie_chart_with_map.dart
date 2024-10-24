@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 // Lớp PieChartWithMap cho phép hiển thị biểu đồ tròn dựa trên dữ liệu từ incomeByTag
 class PieChartWithMap extends StatefulWidget {
   final Map<String, double> incomeByTag; // Dữ liệu thu nhập theo tag
+  final Map<String, String> totalAmountByTag; // Dữ liệu tổng tiền theo tag
 
-  const PieChartWithMap({super.key, required this.incomeByTag});
+  const PieChartWithMap({super.key, required this.incomeByTag, required this.totalAmountByTag});
 
   @override
   State<StatefulWidget> createState() => PieChartWithMapState();
@@ -14,48 +15,88 @@ class PieChartWithMap extends StatefulWidget {
 class PieChartWithMapState extends State<PieChartWithMap> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center, // Căn giữa ngang cho cả biểu đồ và chú thích
-      crossAxisAlignment: CrossAxisAlignment.center, // Căn giữa dọc cho cả biểu đồ và chú thích
-      children: <Widget>[
-        Expanded(
-          flex: 2, // Tỉ lệ phần không gian dành cho biểu đồ
-          child: AspectRatio(
-            aspectRatio: 1, // Tỉ lệ cho biểu đồ
-            child: PieChart(
-              PieChartData(
-                // Loại bỏ xử lý tương tác chạm
-                borderData: FlBorderData(
-                  show: true, // Không hiển thị đường biên
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center, // Căn giữa ngang cho cả biểu đồ và chú thích
+            crossAxisAlignment: CrossAxisAlignment.center, // Căn giữa dọc cho cả biểu đồ và chú thích
+            children: <Widget>[
+              Expanded(
+                flex: 2, // Tỉ lệ phần không gian dành cho biểu đồ
+                child: AspectRatio(
+                  aspectRatio: 1, // Tỉ lệ cho biểu đồ
+                  child: PieChart(
+                    PieChartData(
+                      // Loại bỏ xử lý tương tác chạm
+                      borderData: FlBorderData(
+                        show: true, // Không hiển thị đường biên
+                      ),
+                      sectionsSpace: 0, // Khoảng cách giữa các phần
+                      centerSpaceRadius: 45, // Bán kính không gian giữa
+                      sections: showingSections(), // Hiển thị các phần dựa trên dữ liệu
+                    ),
+                  ),
                 ),
-                sectionsSpace: 0, // Khoảng cách giữa các phần
-                centerSpaceRadius: 45, // Bán kính không gian giữa
-                sections: showingSections(), // Hiển thị các phần dựa trên dữ liệu
               ),
-            ),
+              const SizedBox(width: 20), // Khoảng cách giữa biểu đồ và chú thích
+              Expanded(
+                flex: 1, // Tỉ lệ phần không gian dành cho chú thích
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // Căn giữa dọc cho các chú thích
+                  crossAxisAlignment: CrossAxisAlignment.start, // Căn lề trái cho các chú thích
+                  children: widget.incomeByTag.entries.map((entry) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10), // Khoảng cách giữa các chú thích
+                      child: Indicator(
+                        color: Colors.primaries[
+                            widget.incomeByTag.keys.toList().indexOf(entry.key) %
+                                Colors.primaries.length], // Chọn màu cho từng tag
+                        text: entry.key, // Tên tag
+                        isSquare: true, // Chọn kiểu hình vuông cho indicator
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(width: 20), // Khoảng cách giữa biểu đồ và chú thích
-        Expanded(
-          flex: 1, // Tỉ lệ phần không gian dành cho chú thích
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, // Căn giữa dọc cho các chú thích
-            crossAxisAlignment: CrossAxisAlignment.start, // Căn lề trái cho các chú thích
-            children: widget.incomeByTag.entries.map((entry) {
+           Container(height: 1,
+
+           margin: EdgeInsets.only(bottom: 10, left: 10, right: 10),
+           color: Color(0xFF9ba1a8),
+           ), // Khoảng cách giữa biểu đồ và danh sách tổng tiền
+          // Hiển thị danh sách tag kèm theo tổng số tiền
+          Column(
+            children: widget.totalAmountByTag.entries.map((entry) {
               return Padding(
-                padding: const EdgeInsets.only(bottom: 10), // Khoảng cách giữa các chú thích
-                child: Indicator(
-                  color: Colors.primaries[
-                      widget.incomeByTag.keys.toList().indexOf(entry.key) %
-                          Colors.primaries.length], // Chọn màu cho từng tag
-                  text: entry.key, // Tên tag
-                  isSquare: true, // Chọn kiểu hình vuông cho indicator
+                padding: const EdgeInsets.symmetric( horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(10),
+                          child: Icon(Icons.money_outlined)),
+                        
+                        Text(
+                          entry.key,
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      entry.value, // Hiển thị tổng số tiền
+                      style: const TextStyle(color: Colors.black, fontSize: 15),
+                    ),
+                  ],
                 ),
               );
             }).toList(),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -104,6 +145,7 @@ class Indicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Hình vuông hoặc hình tròn cho chỉ số
         Container(
@@ -117,7 +159,14 @@ class Indicator extends StatelessWidget {
         const SizedBox(
           width: 8, // Khoảng cách giữa chỉ số và văn bản
         ),
-        Text(text), // Hiển thị văn bản của chỉ số
+        // Sử dụng Flexible để cho phép văn bản xuống dòng
+        Flexible(
+          child: Text(
+            text,
+            softWrap: true, // Cho phép xuống dòng
+            overflow: TextOverflow.visible, // Hiển thị overflow
+          ),
+        ),
       ],
     );
   }

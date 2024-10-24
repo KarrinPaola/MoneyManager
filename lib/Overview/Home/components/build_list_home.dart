@@ -15,11 +15,12 @@ Widget BuildListHome(
               padding: const EdgeInsets.all(10),
               itemCount: incomeItems.length,
               itemBuilder: (context, index) {
-                return buildItem(
-                  incomeItems[index]['title'] ?? '',
-                  incomeItems[index]['date'] ?? '',
-                  incomeItems[index]['amount'] ?? '',
-                  incomeItems[index]['tag'] ?? '',
+                return ItemWidget(
+                  title: incomeItems[index]['title'] ?? '',
+                  date:incomeItems[index]['date'] ?? '',
+                  amount:incomeItems[index]['amount'] ?? '',
+                  tagName: incomeItems[index]['tag'] ?? '',
+                  onDelete: (){},
                 );
               },
             )
@@ -30,11 +31,12 @@ Widget BuildListHome(
               padding: const EdgeInsets.all(10),
               itemCount: expenseItems.length,
               itemBuilder: (context, index) {
-                return buildItem(
-                  expenseItems[index]['title'] ?? '',
-                  expenseItems[index]['date'] ?? '',
-                  expenseItems[index]['amount'] ?? '',
-                  expenseItems[index]['tag'] ?? '',
+                return ItemWidget(
+                  title: expenseItems[index]['title'] ?? '',
+                  date: expenseItems[index]['date'] ?? '',
+                  amount: expenseItems[index]['amount'] ?? '',
+                  tagName: expenseItems[index]['tag'] ?? '',
+                                    onDelete: (){},
                 );
               },
             )
@@ -45,11 +47,12 @@ Widget BuildListHome(
               padding: const EdgeInsets.all(10),
               itemCount: remindItems.length,
               itemBuilder: (context, index) {
-                return buildItem(
-                  remindItems[index]['title'] ?? '',
-                  remindItems[index]['date'] ?? '',
-                  remindItems[index]['amount'] ?? '',
-                  remindItems[index]['tag'] ?? '',
+                return ItemWidget(
+                  title: remindItems[index]['title'] ?? '',
+                  date:remindItems[index]['date'] ?? '',
+                  amount:remindItems[index]['amount'] ?? '',
+                  tagName:remindItems[index]['tag'] ?? '',
+                                    onDelete: (){},
                 );
               },
             )

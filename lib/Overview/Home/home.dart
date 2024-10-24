@@ -262,7 +262,9 @@ class _OverviewHomeState extends State<OverviewHome> {
                   bottomLeft:
                       Radius.circular(0), // Không bo tròn góc dưới bên trái
                   bottomRight: Radius.circular(0),
-                )),
+                ), 
+                border: Border(top: BorderSide(color: Color(0xFFedeff1), width: 1))
+                ),
             child: Column(
               children: [
                 Row(

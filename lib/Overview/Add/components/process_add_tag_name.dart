@@ -14,6 +14,7 @@ Future<void> Process_Add_Tag(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
+        backgroundColor: Colors.white,
         title: const Text('Add New Tag'),
         content: TextField(
           controller: newTagController,
