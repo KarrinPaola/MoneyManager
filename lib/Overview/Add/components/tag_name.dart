@@ -5,11 +5,13 @@ class TagName extends StatelessWidget {
       {super.key,
       required this.title,
       required this.isSelected,
-      required this.ontap});
+      required this.ontap,
+      required this.onDelete});
 
   final String title;
   final bool isSelected;
   final VoidCallback ontap;
+  final VoidCallback onDelete;
 
   // Getter for title
   String get getTitle => title;
@@ -18,6 +20,32 @@ class TagName extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: ontap,
+      onLongPress: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Cảnh báo'),
+              content: const Text('Bạn có chắc chắn muốn xoá tag này?'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Huỷ'),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Đóng dialog
+                  },
+                ),
+                TextButton(
+                  child: const Text('Xác nhận'),
+                  onPressed: () {
+                    onDelete(); // Gọi hàm xoá tag
+                    Navigator.of(context).pop(); // Đóng dialog sau khi xoá
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
       child: Container(
         padding: const EdgeInsets.all(15),
         margin: const EdgeInsets.all(5),

@@ -1,3 +1,4 @@
+import 'package:back_up/Overview/Home/components/build_list_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +28,7 @@ class _OverviewHomeState extends State<OverviewHome> {
   double _totalExpense = 0;
   List<Map<String, String>> _incomeItems = [];
   List<Map<String, String>> _expenseItems = [];
-  final List<Map<String, String>> _remindItems = [];
+ List<Map<String, String>> _remindItems = [];
 
   List<Map<String, String>> getSelectedItems(int selectedIndex) {
     switch (selectedIndex) {
@@ -178,41 +179,32 @@ class _OverviewHomeState extends State<OverviewHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFedeff1),
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   automaticallyImplyLeading: false,
-      //   title: const Text(
-      //     'Tổng ngân sách',
-      //     style: TextStyle(
-      //       fontWeight: FontWeight.bold,
-      //     ),
-      //   ),
-      //   actions: [
-      //     IconButton(
-      //       icon: Icon(Icons.logout),
-      //       onPressed: () {
-      //         signUserOut(context);
-      //       },
-      //     ),
-      //   ],
-      // ),
+      backgroundColor: const Color(0xffffffff),
+      
       body: Column(
         children: [
           SafeArea(
             child: Container(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.only(top: 10, right: 20, left: 20, bottom: 20 ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Trang chủ', style: TextStyle(
-            
-                  ),)
+                  Text(
+                    'Trang chủ',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      signUserOut(context);
+                    },
+                    child: Icon(Icons.logout),
+                  )
                 ],
               ),
             ),
-          ),
-          const SizedBox(
-            height: 10,
           ),
           Container(
             height: 220,
@@ -270,7 +262,9 @@ class _OverviewHomeState extends State<OverviewHome> {
                   bottomLeft:
                       Radius.circular(0), // Không bo tròn góc dưới bên trái
                   bottomRight: Radius.circular(0),
-                )),
+                ), 
+                border: Border(top: BorderSide(color: Color(0xFFedeff1), width: 1))
+                ),
             child: Column(
               children: [
                 Row(
@@ -343,50 +337,8 @@ class _OverviewHomeState extends State<OverviewHome> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: getSelectedItems(selectedIndex).length,
-                    itemBuilder: (context, index) {
-                      final entry = getSelectedItems(selectedIndex)[index];
-                      return ListTile(
-                        leading: const Icon(
-                          Icons.monetization_on,
-                          color: Color(0xFF000000),
-                        ),
-                        title: Text(
-                          entry['title']!,
-                          style: const TextStyle(
-                              color: Color(
-                                0xFF000000,
-                              ),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13),
-                        ),
-                        subtitle: Text(
-                          entry['date']!,
-                          style: const TextStyle(
-                            color: Color(0xFF9ba1a8),
-                            fontSize: 13,
-                          ),
-                        ),
-                        trailing: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(entry['amount']!,
-                                  style: const TextStyle(
-                                      color: Color(0xFF000000))),
-                              Text(entry['tag']!,
-                                  style: const TextStyle(
-                                      color: Color(0xFF9ba1a8))),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                  child: BuildListHome(selectedIndex, _incomeItems, _expenseItems, _remindItems, isLogined)
                 ),
               ],
             ),

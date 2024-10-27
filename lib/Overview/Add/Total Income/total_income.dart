@@ -1,14 +1,12 @@
-import 'package:back_up/Overview/Add/components/pie_chart_with_map.dart';
-import 'package:back_up/check_fetch_data.dart';
-import 'package:back_up/check_login.dart';
-import 'package:back_up/userID_Store.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:back_up/Overview/Add/Total%20Income/add_income.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import '../../../check_fetch_data.dart';
+import '../../../userID_Store.dart';
 import '../components/items.dart';
 import '../components/load_data.dart';
+import '../components/pie_chart_with_map.dart';
+import 'add_income.dart';
 
 class TotalIncome extends StatefulWidget {
   const TotalIncome({super.key});
@@ -25,6 +23,7 @@ class _TotalIncomeState extends State<TotalIncome> {
   List<Map<String, String>> _incomeItems = [];
   bool updateTotal = false;
   Map<String, double> incomeByTag = {};
+  Map<String, String> incomeByTagTotal = {};
 
   Future<void> _loadTotalIncome() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
@@ -64,6 +63,16 @@ class _TotalIncomeState extends State<TotalIncome> {
     });
   }
 
+  Future<void> _loadDataOrderByTagToTal() async {
+    String? userId = UserStorage.userId;
+    Map<String, String> itemLoaded =
+        await _service.fetchMonthlyIncomeByTagTotal(
+            userId!, _selectedDay!, 'tagIncome', 'income');
+    setState(() {
+      incomeByTagTotal = itemLoaded;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -71,6 +80,7 @@ class _TotalIncomeState extends State<TotalIncome> {
     _loadIncome(); // Lấy dữ liệu thu nhập cho ngày hiện tại
     _totalIncome = totalIncomeGL;
     _loadDataOrderByTag();
+    _loadDataOrderByTagToTal();
   }
 
   // Phương thức để load thu nhập cho ngày đã chọn
@@ -80,6 +90,7 @@ class _TotalIncomeState extends State<TotalIncome> {
     });
     _loadIncome();
     _loadDataOrderByTag();
+    _loadDataOrderByTagToTal();
   }
 
   void backToHome() {
@@ -98,6 +109,7 @@ class _TotalIncomeState extends State<TotalIncome> {
         _loadTotalIncome();
         updateTotal = update;
         _loadDataOrderByTag();
+        _loadDataOrderByTagToTal();
       });
     }
   }
@@ -233,12 +245,24 @@ class _TotalIncomeState extends State<TotalIncome> {
                                   padding: const EdgeInsets.all(16),
                                   itemCount: _incomeItems.length,
                                   itemBuilder: (context, index) {
-                                    return buildItem(
-                                      _incomeItems[index]['title'] ?? '',
-                                      DateFormat('dd MMM yyyy')
+                                    return ItemWidget(
+                                      title: _incomeItems[index]['title'] ?? '',
+                                      date: DateFormat('dd/MM/yyyy')
                                           .format(_selectedDay!),
-                                      _incomeItems[index]['amount'] ?? '',
-                                      _incomeItems[index]['tag'] ?? '',
+                                      amount:
+                                          _incomeItems[index]['amount'] ?? '',
+                                      tagName: _incomeItems[index]['tag'] ?? '',
+                                      onDelete: () {
+                                        _service.deleteItemWidget(
+                                            UserStorage.userId!,
+                                            'income',
+                                            _incomeItems[index]['id'] ?? '');
+                                        _loadIncome(); // Lấy dữ liệu thu nhập cho ngày hiện tại
+                                        _totalIncome = totalIncomeGL;
+                                        _loadDataOrderByTag();
+                                        _loadDataOrderByTagToTal();
+                                        _loadTotalIncome();
+                                      },
                                     );
                                   },
                                 )
@@ -246,10 +270,11 @@ class _TotalIncomeState extends State<TotalIncome> {
                                   child: Text(
                                       'Không có khoản thu nào trong hôm nay')),
                           // Tab Categories (Chưa có nội dung)
-                          ListView(children: [
-                            Center(
-                                child: PieChartWithMap(incomeByTag: incomeByTag)),
-                          ]),
+                          Center(
+                              child: PieChartWithMap(
+                            incomeByTag: incomeByTag,
+                            totalAmountByTag: incomeByTagTotal,
+                          )),
                         ],
                       ),
                     ),

@@ -63,7 +63,8 @@ class Service {
           .get();
 
       for (var doc in dataSnapshot.docs) {
-        data.add({
+        data.insert(0, {
+          'id': doc.id, // Thêm ID của document
           'title': doc['title'],
           'amount': formatCurrency(
               (doc['amount'] as num).toDouble()), // Định dạng thu nhập
@@ -105,6 +106,7 @@ class Service {
         DateTime docDate = timestamp.toDate();
 
         data.insert(0, {
+          'id': doc.id, // Thêm ID của document
           'title': doc['title'],
           'amount': formatCurrency(
               (doc['amount'] as num).toDouble()), // Định dạng thu nhập
@@ -120,63 +122,165 @@ class Service {
   }
 
   Future<Map<String, double>> fetchMonthlyIncomeByTag(
-    String userId,
-    DateTime selectedDate,
-    String tagCollection,
-    String incomeCollection) async {
-  final startDate = DateTime(selectedDate.year, selectedDate.month, 1); // Ngày đầu tháng
-  final endDate = DateTime(selectedDate.year, selectedDate.month + 1, 1); // Ngày đầu tháng sau
+      String userId,
+      DateTime selectedDate,
+      String tagCollection,
+      String incomeCollection) async {
+    final startDate =
+        DateTime(selectedDate.year, selectedDate.month, 1); // Ngày đầu tháng
+    final endDate = DateTime(
+        selectedDate.year, selectedDate.month + 1, 1); // Ngày đầu tháng sau
 
-  // Lấy income cho tháng được chỉ định
-  final incomeSnapshot = await FirebaseFirestore.instance
-      .collection('users')
-      .doc(userId)
-      .collection(incomeCollection)
-      .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
-      .where('date', isLessThan: Timestamp.fromDate(endDate))
-      .get();
+    // Lấy income cho tháng được chỉ định
+    final incomeSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection(incomeCollection)
+        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+        .where('date', isLessThan: Timestamp.fromDate(endDate))
+        .get();
 
-  // Lấy tagIncome
-  final tagSnapshot = await FirebaseFirestore.instance
-      .collection('users')
-      .doc(userId)
-      .collection(tagCollection)
-      .get();
+    // Lấy tagIncome
+    final tagSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection(tagCollection)
+        .get();
 
-  Map<String, double> incomeByTag = {};
-  double totalIncome = 0.0;
+    Map<String, double> incomeByTag = {};
+    double totalIncome = 0.0;
 
-  // Tạo danh sách các tag
-  List<String> tags = tagSnapshot.docs.map((doc) => doc['tag'] as String).toList();
+    // Tạo danh sách các tag
+    List<String> tags =
+        tagSnapshot.docs.map((doc) => doc['tag'] as String).toList();
 
-  // Tính tổng thu nhập cho từng tag và tổng thu nhập
-  for (var doc in incomeSnapshot.docs) {
-    final data = doc.data();
-    final tag = data['tag'] ?? 'unknown';
-    final amount = (data['amount'] as num).toDouble();
+    // Tính tổng thu nhập cho từng tag và tổng thu nhập
+    for (var doc in incomeSnapshot.docs) {
+      final data = doc.data();
+      final tag = data['tag'] ?? 'unknown'; // Tag từ income
+      final amount = (data['amount'] as num).toDouble();
 
-    // Cộng dồn tổng thu nhập
-    totalIncome += amount;
+      // Cộng dồn tổng thu nhập
+      totalIncome += amount;
 
-    if (tags.contains(tag)) {
-      if (incomeByTag.containsKey(tag)) {
-        incomeByTag[tag] = incomeByTag[tag]! + amount;
+      // Nếu tag đã tồn tại trong danh sách tag hoặc income
+      if (tags.contains(tag) || incomeByTag.containsKey(tag)) {
+        if (incomeByTag.containsKey(tag)) {
+          incomeByTag[tag] = incomeByTag[tag]! + amount;
+        } else {
+          incomeByTag[tag] = amount;
+        }
       } else {
-        incomeByTag[tag] = amount;
+        // Nếu tag không có trong tags, thêm nó vào incomeByTag
+        incomeByTag[tag] = (incomeByTag[tag] ?? 0) + amount;
       }
+    }
+
+    // Tính phần trăm cho từng tag
+    Map<String, double> incomePercentageByTag = {};
+    if (totalIncome > 0) {
+      incomeByTag.forEach((tag, amount) {
+        incomePercentageByTag[tag] =
+            (amount / totalIncome) * 100; // Tính phần trăm
+      });
+    }
+
+    return incomePercentageByTag;
+  }
+
+  Future<Map<String, String>> fetchMonthlyIncomeByTagTotal(
+      String userId,
+      DateTime selectedDate,
+      String tagCollection,
+      String moneyCollection) async {
+    final startDate =
+        DateTime(selectedDate.year, selectedDate.month, 1); // Ngày đầu tháng
+    final endDate = DateTime(
+        selectedDate.year, selectedDate.month + 1, 1); // Ngày đầu tháng sau
+
+    // Lấy income cho tháng được chỉ định
+    final moneySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection(moneyCollection)
+        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+        .where('date', isLessThan: Timestamp.fromDate(endDate))
+        .get();
+
+    // Lấy tagIncome
+    final tagSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection(tagCollection)
+        .get();
+
+    Map<String, double> moneyByTag = {};
+
+    // Tạo danh sách các tag từ collection tag
+    List<String> tags =
+        tagSnapshot.docs.map((doc) => doc['tag'] as String).toList();
+
+    // Tính tổng thu nhập cho từng tag
+    for (var doc in moneySnapshot.docs) {
+      final data = doc.data();
+      final tag = data['tag'] ?? 'unknown'; // Tag từ money
+      final amount = (data['amount'] as num).toDouble();
+
+      // Nếu tag đã tồn tại trong danh sách tag hoặc moneyByTag
+      if (tags.contains(tag) || moneyByTag.containsKey(tag)) {
+        if (moneyByTag.containsKey(tag)) {
+          moneyByTag[tag] = moneyByTag[tag]! + amount;
+        } else {
+          moneyByTag[tag] = amount;
+        }
+      } else {
+        // Nếu tag không có trong tags, thêm nó vào moneyByTag
+        moneyByTag[tag] = (moneyByTag[tag] ?? 0) + amount;
+      }
+    }
+
+    // Chuyển đổi kết quả sang Map<String, String>
+    Map<String, String> incomeMap = moneyByTag.map(
+      (key, value) => MapEntry(key, formatCurrency(value)),
+    );
+
+    return incomeMap;
+  }
+
+  Future<void> deleteTag(
+      String? userId, String tagId, String tagCollection) async {
+    // Tham chiếu đến document của user
+    final userDocRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+
+    // Tham chiếu đến collection tag phù hợp
+    final tagCollectionRef = userDocRef.collection(tagCollection);
+
+    // Tham chiếu đến document tag cần xóa
+    final tagDocRef = tagCollectionRef.doc(tagId);
+
+    try {
+      // Xóa document tag
+      await tagDocRef.delete();
+      print('Tag deleted successfully');
+    } catch (e) {
+      print('Error deleting tag: $e');
     }
   }
 
-  // Tính phần trăm cho từng tag
-  Map<String, double> incomePercentageByTag = {};
-  if (totalIncome > 0) {
-    incomeByTag.forEach((tag, amount) {
-      incomePercentageByTag[tag] = (amount / totalIncome) * 100; // Tính phần trăm
-    });
-  }
+  Future<void> deleteItemWidget(
+      String userId, String tableName, String itemId) async {
+    final userDocRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
 
-  return incomePercentageByTag;
-}
+    try {
+      // Xóa document từ sub-collection
+      await userDocRef.collection(tableName).doc(itemId).delete();
+      print('Item $itemId deleted successfully from $tableName.');
+    } catch (e) {
+      print('Error deleting item: $e');
+    }
+  }
 
   // Hàm định dạng số tiền thành chuỗi tiền tệ Việt Nam Đồng
   String formatCurrency(double amount) {

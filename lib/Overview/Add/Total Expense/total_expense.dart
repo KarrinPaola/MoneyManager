@@ -25,6 +25,7 @@ class _TotalExpenseState extends State<TotalExpense> {
   List<Map<String, String>> _expenseItems = [];
   bool updateTotal = false;
   Map<String, double> outcomeByTag = {};
+  Map<String, String> outcomeByTagTotal = {};
 
   Future<void> _loadTotalExpense() async {
     String? userId = UserStorage.userId; // Lấy userId nếu cần
@@ -64,6 +65,16 @@ class _TotalExpenseState extends State<TotalExpense> {
     });
   }
 
+  Future<void> _loadDataOrderByTagToTal() async {
+    String? userId = UserStorage.userId;
+    Map<String, String> itemLoaded =
+        await _service.fetchMonthlyIncomeByTagTotal(
+            userId!, _selectedDay!, 'tagOutcome', 'outcome');
+    setState(() {
+      outcomeByTagTotal = itemLoaded;
+    });
+  }
+
   void backToHome() {
     Navigator.pop(context, true);
   }
@@ -75,6 +86,7 @@ class _TotalExpenseState extends State<TotalExpense> {
     _loadExpense(); // Lấy dữ liệu thu nhập cho ngày hiện tại
     _totalExpense = totalExpenseGL;
     _loadDataOrderByTag();
+    _loadDataOrderByTagToTal();
   }
 
   // Phương thức để load thu nhập cho ngày đã chọn
@@ -84,6 +96,7 @@ class _TotalExpenseState extends State<TotalExpense> {
     });
     _loadExpense();
     _loadDataOrderByTag();
+    _loadDataOrderByTagToTal();
   }
 
   void goToAddExpense() async {
@@ -98,6 +111,7 @@ class _TotalExpenseState extends State<TotalExpense> {
         _loadTotalExpense();
         updateTotal = update;
         _loadDataOrderByTag();
+        _loadDataOrderByTagToTal();
       });
     }
   }
@@ -232,12 +246,26 @@ class _TotalExpenseState extends State<TotalExpense> {
                                   padding: const EdgeInsets.all(16),
                                   itemCount: _expenseItems.length,
                                   itemBuilder: (context, index) {
-                                    return buildItem(
-                                      _expenseItems[index]['title'] ?? '',
-                                      DateFormat('dd MMM yyyy')
+                                    return ItemWidget(
+                                      title:
+                                          _expenseItems[index]['title'] ?? '',
+                                      date: DateFormat('dd/MM/yyyy')
                                           .format(_selectedDay!),
-                                      _expenseItems[index]['amount'] ?? '',
-                                      _expenseItems[index]['tag'] ?? '',
+                                      amount:
+                                          _expenseItems[index]['amount'] ?? '',
+                                      tagName:
+                                          _expenseItems[index]['tag'] ?? '',
+                                      onDelete: () {
+                                        _service.deleteItemWidget(
+                                            UserStorage.userId!,
+                                            'outcome',
+                                            _expenseItems[index]['id'] ?? '');
+                                        _loadExpense(); // Lấy dữ liệu thu nhập cho ngày hiện tại
+                                        _totalExpense = totalExpenseGL;
+                                        _loadDataOrderByTag();
+                                        _loadDataOrderByTagToTal();
+                                        _loadTotalExpense();
+                                      },
                                     );
                                   },
                                 )
@@ -245,11 +273,12 @@ class _TotalExpenseState extends State<TotalExpense> {
                                   child: Text(
                                       'Không có khoản chi nào trong hôm nay')),
                           // Tab Categories (Chưa có nội dung)
-                          ListView(children: [
-                            Center(
-                                child:
-                                    PieChartWithMap(incomeByTag: outcomeByTag)),
-                          ]),
+                          Center(
+                            child: PieChartWithMap(
+                              incomeByTag: outcomeByTag,
+                              totalAmountByTag: outcomeByTagTotal,
+                            ),
+                          ),
                         ],
                       ),
                     ),
