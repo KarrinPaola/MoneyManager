@@ -24,7 +24,7 @@ Widget BuildListHome(
                 );
               },
             )
-          : Center(child: Text('Chưa có dữ liệu'));
+          : const Center(child: Text('Chưa có dữ liệu'));
     case 0:
       return expenseItems.isNotEmpty
           ? ListView.builder(
@@ -40,7 +40,7 @@ Widget BuildListHome(
                 );
               },
             )
-          : Center(child: Text('Chưa có dữ liệu'));
+          : const Center(child: Text('Chưa có dữ liệu'));
     case 1:
       return remindItems.isNotEmpty
           ? ListView.builder(
@@ -56,7 +56,7 @@ Widget BuildListHome(
                 );
               },
             )
-          : Center(child: Text('Chưa có dữ liệu'));
+          : const Center(child: Text('Chưa có dữ liệu'));
     default:
       return Container(); // Nếu không khớp giá trị nào
   }

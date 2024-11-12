@@ -28,7 +28,7 @@ class _OverviewHomeState extends State<OverviewHome> {
   double _totalExpense = 0;
   List<Map<String, String>> _incomeItems = [];
   List<Map<String, String>> _expenseItems = [];
- List<Map<String, String>> _remindItems = [];
+ final List<Map<String, String>> _remindItems = [];
 
   List<Map<String, String>> getSelectedItems(int selectedIndex) {
     switch (selectedIndex) {
@@ -185,11 +185,11 @@ class _OverviewHomeState extends State<OverviewHome> {
         children: [
           SafeArea(
             child: Container(
-              padding: EdgeInsets.only(top: 10, right: 20, left: 20, bottom: 20 ),
+              padding: const EdgeInsets.only(top: 10, right: 20, left: 20, bottom: 20 ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Trang chủ',
                     style: TextStyle(
                       fontSize: 25,
@@ -200,7 +200,7 @@ class _OverviewHomeState extends State<OverviewHome> {
                     onTap: () {
                       signUserOut(context);
                     },
-                    child: Icon(Icons.logout),
+                    child: const Icon(Icons.logout),
                   )
                 ],
               ),

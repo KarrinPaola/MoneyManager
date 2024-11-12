@@ -243,7 +243,7 @@ class _TotalExpenseState extends State<TotalExpense> {
                           // Tab Expenses với ListView
                           _expenseItems.isNotEmpty
                               ? ListView.builder(
-                                  padding: const EdgeInsets.all(16),
+                                  padding: const EdgeInsets.all(16), 
                                   itemCount: _expenseItems.length,
                                   itemBuilder: (context, index) {
                                     return ItemWidget(

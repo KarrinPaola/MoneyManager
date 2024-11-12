@@ -23,7 +23,7 @@ class _AddExpenseState extends State<AddExpense> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   var update = false;
-  Service _service = Service(); 
+  final Service _service = Service(); 
 
   void backToTotalExpense() {
     Navigator.pop(context, update);

@@ -31,8 +31,8 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: [
-        const Locale('vi', 'VN'), // Vietnamese
-        const Locale('en', 'US'), // English (optional, fallback locale)
+        Locale('vi', 'VN'), // Vietnamese
+        Locale('en', 'US'), // English (optional, fallback locale)
       ],
       locale: Locale('vi', 'VN'),
       home: LoginPage(),
