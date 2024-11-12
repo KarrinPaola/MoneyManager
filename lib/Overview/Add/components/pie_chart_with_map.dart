@@ -63,8 +63,8 @@ class PieChartWithMapState extends State<PieChartWithMap> {
           ),
            Container(height: 1,
 
-           margin: EdgeInsets.only(bottom: 10, left: 10, right: 10),
-           color: Color(0xFF9ba1a8),
+           margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+           color: const Color(0xFF9ba1a8),
            ), // Khoảng cách giữa biểu đồ và danh sách tổng tiền
           // Hiển thị danh sách tag kèm theo tổng số tiền
           Column(
@@ -77,8 +77,8 @@ class PieChartWithMapState extends State<PieChartWithMap> {
                     Row(
                       children: [
                         Container(
-                          margin: EdgeInsets.all(10),
-                          child: Icon(Icons.money_outlined)),
+                          margin: const EdgeInsets.all(10),
+                          child: const Icon(Icons.money_outlined)),
                         
                         Text(
                           entry.key,

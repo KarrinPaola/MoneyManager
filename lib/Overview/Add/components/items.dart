@@ -8,13 +8,13 @@ class ItemWidget extends StatelessWidget {
   final VoidCallback onDelete;
 
   const ItemWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.date,
     required this.amount,
     required this.tagName,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
