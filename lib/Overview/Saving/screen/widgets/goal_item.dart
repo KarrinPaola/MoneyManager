@@ -7,22 +7,21 @@ class GoalItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double progress = goal['saved'] / goal['goal'];
+    double progress = goal['currentAmount'] / goal['totalAmount'];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         children: [
-          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Hiển thị tên mục tiêu
                 Text(
-                  goal['name'],
+                  goal['title'],
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                      fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 5),
                 // Thanh tiến độ
@@ -36,9 +35,9 @@ class GoalItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('\$${goal['saved']}',
+                    Text('\$${goal['currentAmount']}',
                         style: TextStyle(color: Colors.grey.shade600)),
-                    Text('\$${goal['goal']}',
+                    Text('\$${goal['totalAmount']}',
                         style: TextStyle(color: Colors.grey.shade600)),
                   ],
                 ),

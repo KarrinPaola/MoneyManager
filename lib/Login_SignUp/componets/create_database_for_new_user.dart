@@ -33,9 +33,11 @@ Future<void> createUserDatabase(String userId, String? email) async {
 
   // Tạo sub-collection saving
   await userDocRef.collection('saving').doc('sampleSaving').set({
+
     'title': 'Sample Saving',
-    'amount': 0,
-    'tag': 'sample',
+    'currentAmount' : 0,
+    'totalAmount': 0,
+    'type': 'sample',
     'date': Timestamp.fromDate(onlyDate), // Chỉ lưu ngày
   });
 
