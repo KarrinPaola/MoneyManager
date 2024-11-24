@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../screens/add_money_screen.dart'; // Import màn hình AddMoneyScreen
 import 'goal_item.dart';
 
 class GoalsWidget extends StatelessWidget {
@@ -62,17 +61,17 @@ class GoalsWidget extends StatelessWidget {
                     TextEditingController amountController = TextEditingController();
 
                     // Gửi dữ liệu thông qua Navigator.push
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddMoneyScreen(
-                          goalName: goalName,
-                          currentSaved: currentSaved,
-                          goalAmount: goalAmount,
-                          amountController: amountController, // Truyền TextEditingController
-                        ),
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => AddMoneyScreen(
+                    //       goalName: goalName,
+                    //       currentSaved: currentSaved,
+                    //       goalAmount: goalAmount,
+                    //       amountController: amountController, // Truyền TextEditingController
+                    //     ),
+                    //   ),
+                    // );
                   },
                   child: GoalItem(goal: goal), // Hiển thị chi tiết mục tiêu
                 );

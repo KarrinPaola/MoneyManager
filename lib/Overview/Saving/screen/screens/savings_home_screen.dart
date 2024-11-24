@@ -88,172 +88,172 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFedeff1),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        forceMaterialTransparency: true,
+        title: const Center(
+          child: Text(
+            'Savings',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ),
+        
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add, color: Colors.black),
+            onPressed: () async {
+              bool? update = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddGoals(),
+                ),
+              );
+              if (update == true) {
+                _loadDataTotalAmount();
+                _loadDataCurrentAmount();
+                _loadDataSavingList();
+              }
+            },
+          ),
+        ],
+        elevation: 0, // Remove shadow
+      ),
+      body: Column(
+        children: [
+          Container(
+            color: const Color(0xFFedeff1),
+            padding: const EdgeInsets.all(30),
+            child: Center(
+              child: SavingsWidget(
+                totalAmountSum: totalAmountSum,
+                currentAmountSum: currentAmountSum,
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          Expanded(
+            child: Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                color: Colors.white,
+              ),
+              child: Column(
                 children: [
-                  Expanded(
-                    child: Center(
-                      child: const Text(
-                        'Savings',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Mục tiêu của bạn',
+                          style: TextStyle(
+                            color: Color(0xFF000000),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
+                        Container(
+                          width: 40,
+                          height: 40,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: const Color(0xFF9ba1a8),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.more_horiz,
+                            size: 35,
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.add, color: Colors.black),
-                    onPressed: () async {
-                      bool? update = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AddGoals(),
-                        ),
-                      );
-                      if (update == true) {
-                        _loadDataTotalAmount();
-                        _loadDataCurrentAmount();
-                        _loadDataSavingList();
-                      }
-                    },
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(25),
+                      itemCount: savingsList.length,
+                      itemBuilder: (context, index) {
+                        final goal = savingsList[index];
+                        return GestureDetector(
+                            onLongPress: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Options'),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ListTile(
+                                          leading: const Icon(Icons.edit),
+                                          title: const Text('Chỉnh sửa'),
+                                          onTap: () async {
+                                            Navigator.pop(context);
+                                            bool? update =
+                                                await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AddMoneyScreen(
+                                                        goal: goal),
+                                              ),
+                                            );
+                                            if (update == true) {
+                                              _loadDataTotalAmount();
+                                              _loadDataCurrentAmount();
+                                              _loadDataSavingList();
+                                            }
+                                          },
+                                        ),
+                                        ListTile(
+                                          leading: const Icon(Icons.delete),
+                                          title: const Text('Xoá'),
+                                          onTap: () async {
+                                            Navigator.pop(context);
+                                            _deleteSaving(goal['id']);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: Transform.translate(
+                              offset: const Offset(0,
+                                  -18), // Di chuyển lên trên 10px (y = -10)
+                              child: Container(
+                                margin: const EdgeInsets.only(
+                                    bottom:
+                                        1), // Giữ khoảng cách dưới cùng nếu cần
+                                padding: const EdgeInsets.all(
+                                    5), // Giữ padding như trước
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: GoalItem(goal: goal),
+                              ),
+                            ));
+                      },
+                    ),
                   ),
                 ],
               ),
             ),
-            Container(
-              color: const Color(0xFFedeff1),
-              padding: const EdgeInsets.all(30),
-              child: Center(
-                child: SavingsWidget(totalAmountSum: totalAmountSum, currentAmountSum: currentAmountSum,),
-              ),
-            ),
-            const SizedBox(height: 30),
-            Expanded(
-              child: Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                  color: Colors.white,
-                ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Mục tiêu của bạn',
-                            style: TextStyle(
-                              color: Color(0xFF000000),
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Container(
-                            width: 40,
-                            height: 40,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: const Color(0xFF9ba1a8),
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(
-                              Icons.more_horiz,
-                              size: 35,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(25),
-                        itemCount: savingsList.length,
-                        itemBuilder: (context, index) {
-                          final goal = savingsList[index];
-                          return GestureDetector(
-                              onLongPress: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('Options'),
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          ListTile(
-                                            leading: const Icon(Icons.edit),
-                                            title: const Text('Chỉnh sửa'),
-                                            onTap: () async {
-                                              Navigator.pop(context);
-                                              bool? update = await Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AddMoneyScreen(goal: goal),
-                                                ),
-                                              );
-                                              if (update == true) {
-                                                _loadDataTotalAmount();
-                                                _loadDataCurrentAmount();
-                                                _loadDataSavingList();
-                                              }
-                                            },
-                                          ),
-                                          ListTile(
-                                            leading: const Icon(Icons.delete),
-                                            title: const Text('Xoá'),
-                                            onTap: () async {
-                                              Navigator.pop(context);
-                                              _deleteSaving(goal['id']);
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: Transform.translate(
-                                offset: const Offset(
-                                    0, -18), // Di chuyển lên trên 10px (y = -10)
-                                child: Container(
-                                  margin: const EdgeInsets.only(
-                                      bottom:
-                                          1), // Giữ khoảng cách dưới cùng nếu cần
-                                  padding: const EdgeInsets.all(
-                                      5), // Giữ padding như trước
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: GoalItem(goal: goal),
-                                ),
-                              ));
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
