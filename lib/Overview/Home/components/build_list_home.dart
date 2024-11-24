@@ -6,7 +6,7 @@ Widget BuildListHome(
     int selectedIndex,
     List<Map<String, String>> incomeItems,
     List<Map<String, String>> expenseItems,
-    List<Map<String, String>> remindItems, 
+    List<Map<String, String>> remindItems,
     bool isLogined) {
   switch (selectedIndex) {
     case 2:
@@ -17,10 +17,12 @@ Widget BuildListHome(
               itemBuilder: (context, index) {
                 return ItemWidget(
                   title: incomeItems[index]['title'] ?? '',
-                  date:incomeItems[index]['date'] ?? '',
-                  amount:incomeItems[index]['amount'] ?? '',
+                  date: incomeItems[index]['date'] ?? '',
+                  amount: incomeItems[index]['amount'] ?? '',
                   tagName: incomeItems[index]['tag'] ?? '',
-                  onDelete: (){},
+                  onDelete: () {
+                    // Implement deletion logic here if needed
+                  },
                 );
               },
             )
@@ -36,7 +38,9 @@ Widget BuildListHome(
                   date: expenseItems[index]['date'] ?? '',
                   amount: expenseItems[index]['amount'] ?? '',
                   tagName: expenseItems[index]['tag'] ?? '',
-                                    onDelete: (){},
+                  onDelete: () {
+                    // Implement deletion logic here if needed
+                  },
                 );
               },
             )
@@ -49,15 +53,17 @@ Widget BuildListHome(
               itemBuilder: (context, index) {
                 return ItemWidget(
                   title: remindItems[index]['title'] ?? '',
-                  date:remindItems[index]['date'] ?? '',
-                  amount:remindItems[index]['amount'] ?? '',
-                  tagName:remindItems[index]['tag'] ?? '',
-                                    onDelete: (){},
+                  date: remindItems[index]['date'] ?? '',
+                  amount: remindItems[index]['amount'] ?? '',
+                  tagName: remindItems[index]['tag'] ?? '',
+                  onDelete: () {
+                    // Implement deletion logic here if needed
+                  },
                 );
               },
             )
           : const Center(child: Text('Chưa có dữ liệu'));
     default:
-      return Container(); // Nếu không khớp giá trị nào
+      return Container(); // Default empty container
   }
 }

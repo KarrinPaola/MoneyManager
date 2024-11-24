@@ -28,7 +28,7 @@ class _OverviewHomeState extends State<OverviewHome> {
   double _totalExpense = 0;
   List<Map<String, String>> _incomeItems = [];
   List<Map<String, String>> _expenseItems = [];
- final List<Map<String, String>> _remindItems = [];
+  final List<Map<String, String>> _remindItems = [];
 
   List<Map<String, String>> getSelectedItems(int selectedIndex) {
     switch (selectedIndex) {
@@ -180,12 +180,12 @@ class _OverviewHomeState extends State<OverviewHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
-      
       body: Column(
         children: [
           SafeArea(
             child: Container(
-              padding: const EdgeInsets.only(top: 10, right: 20, left: 20, bottom: 20 ),
+              padding: const EdgeInsets.only(
+                  top: 10, right: 20, left: 20, bottom: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -262,9 +262,9 @@ class _OverviewHomeState extends State<OverviewHome> {
                   bottomLeft:
                       Radius.circular(0), // Không bo tròn góc dưới bên trái
                   bottomRight: Radius.circular(0),
-                ), 
-                border: Border(top: BorderSide(color: Color(0xFFedeff1), width: 1))
                 ),
+                border: Border(
+                    top: BorderSide(color: Color(0xFFedeff1), width: 1))),
             child: Column(
               children: [
                 Row(
@@ -338,8 +338,8 @@ class _OverviewHomeState extends State<OverviewHome> {
                   ),
                 ),
                 Expanded(
-                  child: BuildListHome(selectedIndex, _incomeItems, _expenseItems, _remindItems, isLogined)
-                ),
+                    child: BuildListHome(selectedIndex, _incomeItems,
+                        _expenseItems, _remindItems, isLogined)),
               ],
             ),
           ),

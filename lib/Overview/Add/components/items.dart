@@ -48,8 +48,12 @@ class ItemWidget extends StatelessWidget {
           },
         );
       },
-      child: Padding(
+      child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

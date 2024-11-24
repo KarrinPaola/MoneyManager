@@ -21,6 +21,7 @@ class _AddGoalsState extends State<AddGoals> {
   final TextEditingController deadlineController = TextEditingController();
   DateTime selectedDay = DateTime.now();
   bool update = false;
+
   @override
   void dispose() {
     // Dispose of controllers when not needed
@@ -29,6 +30,85 @@ class _AddGoalsState extends State<AddGoals> {
     contributionTypeController.dispose();
     deadlineController.dispose();
     super.dispose();
+  }
+
+  Future<void> _addGoalToDatabase() async {
+    try {
+      // Kiểm tra các trường dữ liệu
+      if (goalTitleController.text.isEmpty ||
+          amountController.text.isEmpty ||
+          contributionTypeController.text.isEmpty ||
+          deadlineController.text.isEmpty) {
+        _showErrorDialog("Please fill in all fields");
+        return;
+      }
+
+      // Thêm dữ liệu vào Firestore
+      await AddGoalsDatabase(
+        UserStorage.userId!,
+        goalTitleController.text,
+        double.parse(amountController.text),
+        contributionTypeController.text,
+        selectedDay,
+      );
+
+      // Hiển thị AlertDialog sau khi thêm thành công
+      _showSuccessDialog();
+    } catch (e) {
+      _showErrorDialog("Failed to add goal: $e");
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Error"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Goal Added"),
+        content: const Text("Your goal has been successfully added."),
+        actions: [
+          // Nút tiếp tục thêm mới
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Đóng dialog
+              goalTitleController.clear();
+              amountController.clear();
+              contributionTypeController.clear();
+              deadlineController.clear();
+              setState(() {
+                selectedDay = DateTime.now(); // Reset deadline
+              });
+            },
+            child: const Text("Add Another"),
+          ),
+          // Nút quay lại màn hình trước
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Đóng dialog
+              Navigator.pop(context, update); // Quay lại màn hình trước
+            },
+            child: const Text("Go Back"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -94,15 +174,9 @@ class _AddGoalsState extends State<AddGoals> {
 
             // Button to add goal
             ElevatedButton(
-              onPressed: () {
-                AddGoalsDatabase(
-                    UserStorage.userId!,
-                    goalTitleController.text,
-                    double.parse(amountController.text),
-                    contributionTypeController.text,
-                    selectedDay!);
-                update = true;
-                // Add goal logic here...
+              onPressed: () async {
+                await _addGoalToDatabase();
+                update = true; // Cập nhật trạng thái
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF1e42f9),

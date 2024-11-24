@@ -1,195 +1,165 @@
 import 'package:flutter/material.dart';
 
-class SavingsWidget extends StatefulWidget {
-  const SavingsWidget({super.key});
+class SavingsWidget extends StatelessWidget {
+  final double totalAmountSum;
+  final double currentAmountSum;
 
-  @override
-  _SavingsWidgetState createState() => _SavingsWidgetState();
-}
-
-class _SavingsWidgetState extends State<SavingsWidget> {
-  Future<Map<String, double>> fetchSavingsData() async {
-    // phương thức lấy dữ liệu từ cơ sở dữ liệu hoặc API
-    double savedAmount = 200;
-    double goalAmount = 500;
-
-    await Future.delayed(const Duration(seconds: 2)); // Giả lập độ trễ
-    return {'savedAmount': savedAmount, 'goalAmount': goalAmount};
-  }
+  const SavingsWidget({
+    Key? key,
+    required this.totalAmountSum,
+    required this.currentAmountSum,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, double>>(
-      future: fetchSavingsData(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return const Center(child: Text("Error loading data"));
-        } else if (snapshot.hasData) {
-          double savedAmount = snapshot.data!['savedAmount']!;
-          double goalAmount = snapshot.data!['goalAmount']!;
-
-          return Column(
-            children: [
-              // Phần chữ "Current Savings"
-              Text(
-                'Current Savings',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade700,
-                ),
+    return Column(
+      children: [
+        // Display "Current Savings" text
+        Text(
+          'Current Savings',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey.shade700,
+          ),
+        ),
+        const SizedBox(height: 10),
+        // Circular display for the current amount sum
+        Container(
+          width: 150,
+          height: 150,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: Color(0xFF2144FA),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10,
+                offset: Offset(0, 5),
               ),
-              const SizedBox(height: 10),
-              // Hình tròn hiển thị số tiền với bóng đổ và màu sắc tùy chỉnh
-              Container(
-                width: 150,
-                height: 150,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF2144FA), // Màu mới
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26, // Màu bóng đổ nhẹ
-                      blurRadius: 10,
-                      offset: Offset(0, 5), // Đổ bóng nhẹ xuống dưới
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    '\$$savedAmount',
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white, // Chữ trắng nổi bật
-                    ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              '\$$currentAmountSum',
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        // Monthly goal display
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_today, color: Colors.grey.shade600),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'July 2024',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Total Goal for this Month',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey.shade600,
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              // Mục tiêu tháng với thanh trượt lớn hơn
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white, // Màu trắng cho widget
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 6,
-                      offset: Offset(0, 3), // Đổ bóng nhẹ cho widget
+              const SizedBox(height: 10),
+              Stack(
+                children: [
+                  // Progress bar
+                  Container(
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Row(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: currentAmountSum.toInt(),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF2144FA),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: (totalAmountSum - currentAmountSum).toInt(),
+                          child: Container(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Displaying current and total amounts
+                  Positioned.fill(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_today,
-                                color: Colors.grey.shade600),
-                            const SizedBox(width: 10),
-                            const Text(
-                              'July 2024',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            '\$$currentAmountSum',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Goal for this Month',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Stack(
-                      children: [
-                        // Thanh trượt lớn hơn
-                        Container(
-                          height: 30, // Tăng chiều cao của thanh trượt
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300], // Màu nền thanh trượt
-                            borderRadius: BorderRadius.circular(
-                                16), // Bo góc cho thanh trượt
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: savedAmount.toInt(),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color(
-                                        0xFF2144FA), // Màu của phần đã tiết kiệm
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: (goalAmount - savedAmount).toInt(),
-                                child: Container(), // Phần chưa đạt mục tiêu
-                              ),
-                            ],
                           ),
                         ),
-                        // Hiển thị giá trị hiện tại và mục tiêu
-                        Positioned.fill(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: Text(
-                                  '\$$savedAmount',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white, // Màu chữ trắng
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: Text(
-                                  '\$$goalAmount',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors
-                                        .grey.shade600, // Màu chữ của mục tiêu
-                                  ),
-                                ),
-                              ),
-                            ],
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            '\$$totalAmountSum',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade600,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
-          );
-        } else {
-          return const Center(child: Text("No data available"));
-        }
-      },
+          ),
+        ),
+      ],
     );
   }
 }

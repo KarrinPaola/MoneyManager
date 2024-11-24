@@ -4,20 +4,18 @@ class AddMoneyScreen extends StatelessWidget {
   final String goalName;
   final double currentSaved;
   final double goalAmount;
-  final TextEditingController amountController; // Truyền từ bên ngoài
+  final TextEditingController amountController;
 
-  // Chấp nhận TextEditingController từ bên ngoài để dễ dàng quản lý
   const AddMoneyScreen({
     super.key,
     required this.goalName,
     required this.currentSaved,
     required this.goalAmount,
-    required this.amountController, // Bắt buộc phải truyền controller
+    required this.amountController,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Tính toán tỷ lệ phần trăm đã tiết kiệm được
     double progress = currentSaved / goalAmount;
 
     return Scaffold(
@@ -38,7 +36,6 @@ class AddMoneyScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Hiển thị mục tiêu và số tiền với thanh tiến độ
             Text(
               goalName,
               style: const TextStyle(
@@ -47,16 +44,14 @@ class AddMoneyScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-
-            // Thanh tiến độ và số tiền
             Container(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Column(
                 children: [
                   LinearProgressIndicator(
-                    value: progress, // Giá trị tiến độ
+                    value: progress,
                     backgroundColor: Colors.grey.shade300,
-                    color: const Color(0xFF2548FB), // Màu xanh giống trong hình
+                    color: const Color(0xFF2548FB),
                     minHeight: 6,
                   ),
                   const SizedBox(height: 10),
@@ -64,14 +59,14 @@ class AddMoneyScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '\$${currentSaved.toStringAsFixed(2)}', // Số tiền đã tiết kiệm
+                        '\$${currentSaved.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.black,
                         ),
                       ),
                       Text(
-                        '\$${goalAmount.toStringAsFixed(2)}', // Mục tiêu số tiền
+                        '\$${goalAmount.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.black,
@@ -83,28 +78,27 @@ class AddMoneyScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Phần nhập số tiền thêm vào
             const Text(
               'Enter Amount to Add',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             TextField(
-              controller: amountController, // Sử dụng controller từ bên ngoài
+              controller: amountController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
                 labelText: 'Amount',
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black), // Black border when focused
+                ),
               ),
             ),
             const SizedBox(height: 20),
-
-            // Nút xác nhận với màu nền #2548FB và chữ trắng
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2548FB), // Màu nền nút
+                  backgroundColor: const Color(0xFF2548FB),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 40,
                     vertical: 15,
@@ -113,7 +107,6 @@ class AddMoneyScreen extends StatelessWidget {
                 onPressed: () {
                   final amount = double.tryParse(amountController.text);
                   if (amount != null && amount > 0) {
-                    // Hiển thị AlertDialog thông báo thành công
                     showDialog(
                       context: context,
                       builder: (context) {
@@ -123,8 +116,8 @@ class AddMoneyScreen extends StatelessWidget {
                           actions: [
                             TextButton(
                               onPressed: () {
-                                Navigator.of(context).pop(); // Đóng AlertDialog
-                                Navigator.pop(context, amount); // Trả về số tiền đã nhập và đóng màn hình
+                                Navigator.of(context).pop();
+                                Navigator.pop(context, amount);
                               },
                               child: const Text('OK'),
                             ),
@@ -133,7 +126,6 @@ class AddMoneyScreen extends StatelessWidget {
                       },
                     );
                   } else {
-                    // Hiển thị thông báo khi nhập không hợp lệ
                     showDialog(
                       context: context,
                       builder: (context) {
@@ -155,7 +147,7 @@ class AddMoneyScreen extends StatelessWidget {
                 },
                 child: const Text(
                   'Add Money',
-                  style: TextStyle(color: Colors.white), // Màu chữ trắng
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),
