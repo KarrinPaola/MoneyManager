@@ -5,6 +5,7 @@ import 'package:back_up/Overview/Saving/screen/widgets/goal_item.dart';
 import 'package:back_up/userID_Store.dart';
 import 'package:flutter/material.dart';
 
+import '../components/Service.dart';
 import '../widgets/savings_widget.dart';
 
 class SavingsHomeScreen extends StatefulWidget {
@@ -16,10 +17,55 @@ class SavingsHomeScreen extends StatefulWidget {
 
 class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
   final SavingService savingService = SavingService();
+  final FirestoreService firestoreService = FirestoreService();
   double totalAmountSum = 0.0;
   double currentAmountSum = 0.0;
   List<Map<String, dynamic>> savingsList = [];
+  Set<String> ignoredGoals =
+      {}; // Set to keep track of goals with canceled alerts.
 
+  @override
+  void initState() {
+    super.initState();
+    _loadIgnoredGoals(); // Load ignored goals from SharedPreferences
+    _loadDataTotalAmount();
+    _loadDataCurrentAmount();
+    _loadDataSavingList();
+  }
+
+  // Hàm hiển thị thông báo khi mục tiêu đã hoàn thành
+  void _showCompletionDialog(goal, double surplus) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Chúc mừng!"),
+        content: const Text("Mục tiêu của bạn đã hoàn thành!"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Đóng"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Lấy danh sách mục tiêu bị bỏ qua từ Firestore
+  Future<void> _loadIgnoredGoals() async {
+    String? userId = UserStorage.userId;
+    List<String> goals = await firestoreService.getIgnoredGoals(userId!);
+    setState(() {
+      ignoredGoals = goals.toSet();
+    });
+  }
+
+  // Lưu ID mục tiêu đã hủy vào Firestore
+  Future<void> _saveIgnoredGoal(String goalId) async {
+    String? userId = UserStorage.userId;
+    await firestoreService.addIgnoredGoal(userId!, goalId);
+  }
+
+  // Hàm tải dữ liệu tổng số tiền
   Future<void> _loadDataTotalAmount() async {
     String? userId = UserStorage.userId;
     double temp = await savingService.getTotalAmount(userId!);
@@ -28,6 +74,7 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
     });
   }
 
+  // Hàm tải dữ liệu số tiền đã tiết kiệm
   Future<void> _loadDataCurrentAmount() async {
     String? userId = UserStorage.userId;
     double temp = await savingService.getTotalCurrentAmount(userId!);
@@ -36,6 +83,7 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
     });
   }
 
+  // Hàm tải danh sách các mục tiêu tiết kiệm
   Future<void> _loadDataSavingList() async {
     String? userId = UserStorage.userId;
     List<Map<String, dynamic>> temp =
@@ -43,8 +91,80 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
     setState(() {
       savingsList = temp;
     });
+
+    // Kiểm tra xem có mục tiêu nào cần hiển thị alert không
+    _checkForAlertDialog();
   }
 
+  // Hàm kiểm tra và hiển thị AlertDialog nếu currentAmount lớn hơn totalAmount
+  void _checkForAlertDialog() {
+    for (var goal in savingsList) {
+      if (!ignoredGoals.contains(goal['id']) &&
+          goal['currentAmount'] > goal['totalAmount']) {
+        _showAmountExceedDialog(goal['id']);
+      }
+    }
+  }
+
+  // Hiển thị thông báo khi người dùng bấm hủy
+  void _showAmountExceedDialog(String goalId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Số tiền đã vượt quá mục tiêu'),
+          content: const Text('Bạn có muốn hủy hoặc chuyển tiền?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Lưu ID mục tiêu vào Firestore khi bấm hủy
+                setState(() {
+                  ignoredGoals.add(goalId);
+                });
+                _saveIgnoredGoal(goalId); // Lưu vào Firestore
+              },
+              child: const Text('Hủy'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Logic chuyển tiền (nếu cần)
+              },
+              child: const Text('Chuyển tiền'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void checkForAlertDialog() {
+    for (var goal in savingsList) {
+      // Kiểm tra nếu 'currentAmount' và 'totalAmount' không phải null và chuyển thành double nếu cần
+      double currentAmount =
+          (goal['currentAmount'] != null && goal['currentAmount'] is num)
+              ? (goal['currentAmount'] is double
+                  ? goal['currentAmount']
+                  : (goal['currentAmount'] as num).toDouble())
+              : 0.0; // Default to 0.0 if invalid
+
+      double totalAmount =
+          (goal['totalAmount'] != null && goal['totalAmount'] is num)
+              ? (goal['totalAmount'] is double
+                  ? goal['totalAmount']
+                  : (goal['totalAmount'] as num).toDouble())
+              : 0.0; // Default to 0.0 if invalid
+
+      // Kiểm tra nếu currentAmount lớn hơn totalAmount và mục tiêu chưa bị bỏ qua
+      if (currentAmount > totalAmount && !ignoredGoals.contains(goal['id'])) {
+        double surplus = currentAmount - totalAmount; // Tính số tiền thừa
+        _showCompletionDialog(goal['id'], surplus); // Hiển thị thông báo
+      }
+    }
+  }
+
+  // Hàm xóa mục tiêu tiết kiệm
   Future<void> _deleteSaving(String id) async {
     try {
       await savingService.deleteSaving(id);
@@ -57,6 +177,7 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
     }
   }
 
+  // Hàm hiển thị lỗi
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -78,14 +199,6 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _loadDataTotalAmount();
-    _loadDataCurrentAmount();
-    _loadDataSavingList();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -102,7 +215,6 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
             ),
           ),
         ),
-        
         actions: [
           IconButton(
             icon: const Icon(Icons.add, color: Colors.black),
@@ -132,6 +244,8 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
               child: SavingsWidget(
                 totalAmountSum: totalAmountSum,
                 currentAmountSum: currentAmountSum,
+                totalText: '',
+                currentText: '',
               ),
             ),
           ),
@@ -200,13 +314,11 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
                                           title: const Text('Chỉnh sửa'),
                                           onTap: () async {
                                             Navigator.pop(context);
-                                            bool? update =
-                                                await Navigator.push(
+                                            bool? update = await Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    AddMoneyScreen(
-                                                        goal: goal),
+                                                    AddMoneyScreen(goal: goal),
                                               ),
                                             );
                                             if (update == true) {
@@ -231,8 +343,8 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
                               );
                             },
                             child: Transform.translate(
-                              offset: const Offset(0,
-                                  -18), // Di chuyển lên trên 10px (y = -10)
+                              offset: const Offset(
+                                  0, -18), // Di chuyển lên trên 10px (y = -10)
                               child: Container(
                                 margin: const EdgeInsets.only(
                                     bottom:

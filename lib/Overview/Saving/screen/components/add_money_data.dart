@@ -1,44 +1,49 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// Cập nhật currentAmount cho một mục tiêu tiết kiệm
 Future<void> AddMoneyDatabase(
   String userId,
-  String documentId, // Document ID to identify which record to update
+  String documentId, // Document ID để xác định bản ghi cần cập nhật
   String title,
-  double totalAmount,
-  double currentAmount,
+  double currentAmount, // Chỉ sử dụng currentAmount
 ) async {
   final userDocRef = FirebaseFirestore.instance.collection('users').doc(userId);
 
   try {
-    // Updating the existing saving document
+    // Cập nhật document trong collection 'saving'
     await userDocRef.collection('saving').doc(documentId).update({
-      'title': title,
-      'totalAmount': totalAmount,
-      'currentAmount': currentAmount,
-      'updatedAt': Timestamp.now(), // Optional field to keep track of the update time
+      'title': title, // Cập nhật tiêu đề (nếu cần)
+      'currentAmount': currentAmount, // Cập nhật số tiền hiện tại
+      'updatedAt': Timestamp.now(), // Tùy chọn: lưu thời gian cập nhật
     });
 
-    print('Saving goal updated successfully');
+    print('Cập nhật mục tiêu tiết kiệm thành công');
   } catch (e) {
-    print('Error updating saving goal: $e');
+    print('Lỗi khi cập nhật mục tiêu tiết kiệm: $e');
+    throw e; // Tùy chọn: ném lỗi để xử lý ở nơi gọi hàm
   }
 }
 
+/// Tính tổng currentAmount của tất cả các mục tiêu tiết kiệm
 Future<double> getTotalCurrentAmount(String userId) async {
   double currentAmountSum = 0.0;
 
   try {
     final userDocRef = FirebaseFirestore.instance.collection('users').doc(userId);
+
+    // Lấy tất cả các document trong collection 'saving'
     final QuerySnapshot snapshot = await userDocRef.collection('saving').get();
 
+    // Duyệt qua từng document và cộng dồn giá trị của 'currentAmount'
     for (var doc in snapshot.docs) {
-      currentAmountSum += doc['currentAmount'];
+      final currentAmount = doc['currentAmount'] as num? ?? 0.0;
+      currentAmountSum += currentAmount.toDouble();
     }
 
-    print('Total current amount: $currentAmountSum');
+    print('Tổng số tiền đã tiết kiệm: $currentAmountSum');
   } catch (e) {
-    print('Error fetching current amount: $e');
-    return 0.0; // Return 0 in case of an error
+    print('Lỗi khi lấy tổng số tiền tiết kiệm: $e');
+    return 0.0; // Trả về 0 nếu có lỗi
   }
 
   return currentAmountSum;

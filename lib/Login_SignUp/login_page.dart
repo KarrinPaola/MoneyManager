@@ -60,6 +60,8 @@ class _LoginPageState extends State<LoginPage> {
 
       // Đóng hộp thoại tải lên
       Navigator.pop(context);
+      usernameController.text = "";
+      passwordController.text = "";
       Navigator.push(context, MaterialPageRoute(builder: (context) => const MyOverview()),);
 
     } on FirebaseAuthException catch (e) {

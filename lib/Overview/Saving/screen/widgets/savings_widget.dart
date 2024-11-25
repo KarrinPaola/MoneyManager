@@ -7,7 +7,7 @@ class SavingsWidget extends StatelessWidget {
   const SavingsWidget({
     Key? key,
     required this.totalAmountSum,
-    required this.currentAmountSum,
+    required this.currentAmountSum, required String totalText, required String currentText,
   }) : super(key: key);
 
   @override
