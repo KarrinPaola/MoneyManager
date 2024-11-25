@@ -21,16 +21,16 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
   double totalAmountSum = 0.0;
   double currentAmountSum = 0.0;
   List<Map<String, dynamic>> savingsList = [];
-  Set<String> ignoredGoals =
-      {}; // Set to keep track of goals with canceled alerts.
+  Set<String> ignoredGoalIds = {};
+  Map<String, double> ignoredGoalAmounts = {};
 
   @override
   void initState() {
     super.initState();
-    _loadIgnoredGoals(); // Load ignored goals from SharedPreferences
-    _loadDataTotalAmount();
-    _loadDataCurrentAmount();
-    _loadDataSavingList();
+    _loadIgnoredGoals(); // Tải ignored_goals từ Firestore
+    _loadDataTotalAmount(); // Tải tổng số tiền
+    _loadDataCurrentAmount(); // Tải số tiền hiện tại
+    _loadDataSavingList(); // Tải danh sách mục tiêu
   }
 
   // Hàm hiển thị thông báo khi mục tiêu đã hoàn thành
@@ -50,19 +50,27 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
     );
   }
 
-  // Lấy danh sách mục tiêu bị bỏ qua từ Firestore
   Future<void> _loadIgnoredGoals() async {
-    String? userId = UserStorage.userId;
-    List<String> goals = await firestoreService.getIgnoredGoals(userId!);
-    setState(() {
-      ignoredGoals = goals.toSet();
-    });
-  }
+  String? userId = UserStorage.userId;
+  List<Map<String, dynamic>> goals =
+      await firestoreService.getIgnoredGoalsWithAmounts(userId!);
 
-  // Lưu ID mục tiêu đã hủy vào Firestore
-  Future<void> _saveIgnoredGoal(String goalId) async {
+  print("Dữ liệu ignored_goals tải về: $goals");
+
+  setState(() {
+    ignoredGoalIds = goals.map((goal) => goal['id'].toString()).toSet();
+    ignoredGoalAmounts = {
+      for (var goal in goals)
+        goal['id'].toString(): goal['currentAmount'] as double
+    };
+  });
+}
+
+
+  Future<void> _saveIgnoredGoal(String goalId, double currentAmount) async {
     String? userId = UserStorage.userId;
-    await firestoreService.addIgnoredGoal(userId!, goalId);
+    await firestoreService.addIgnoredGoalWithAmount(
+        userId!, goalId, currentAmount);
   }
 
   // Hàm tải dữ liệu tổng số tiền
@@ -96,18 +104,21 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
     _checkForAlertDialog();
   }
 
-  // Hàm kiểm tra và hiển thị AlertDialog nếu currentAmount lớn hơn totalAmount
   void _checkForAlertDialog() {
     for (var goal in savingsList) {
-      if (!ignoredGoals.contains(goal['id']) &&
-          goal['currentAmount'] > goal['totalAmount']) {
-        _showAmountExceedDialog(goal['id']);
+      String goalId = goal['id'];
+      double currentAmount = goal['currentAmount'] ?? 0.0;
+      double totalAmount = goal['totalAmount'] ?? 0.0;
+
+      if (currentAmount > totalAmount &&
+          (!ignoredGoalIds.contains(goalId) ||
+              ignoredGoalAmounts[goalId] != currentAmount)) {
+        _showAmountExceedDialog(goalId, currentAmount);
       }
     }
   }
 
-  // Hiển thị thông báo khi người dùng bấm hủy
-  void _showAmountExceedDialog(String goalId) {
+  void _showAmountExceedDialog(String goalId, double currentAmount) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -118,18 +129,18 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                // Lưu ID mục tiêu vào Firestore khi bấm hủy
                 setState(() {
-                  ignoredGoals.add(goalId);
+                  ignoredGoalIds.add(goalId);
+                  ignoredGoalAmounts[goalId] = currentAmount;
                 });
-                _saveIgnoredGoal(goalId); // Lưu vào Firestore
+                _saveIgnoredGoal(goalId, currentAmount);
               },
               child: const Text('Hủy'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                // Logic chuyển tiền (nếu cần)
+                // Logic chuyển tiền
               },
               child: const Text('Chuyển tiền'),
             ),
@@ -157,7 +168,7 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
               : 0.0; // Default to 0.0 if invalid
 
       // Kiểm tra nếu currentAmount lớn hơn totalAmount và mục tiêu chưa bị bỏ qua
-      if (currentAmount > totalAmount && !ignoredGoals.contains(goal['id'])) {
+      if (currentAmount > totalAmount && !ignoredGoalIds.contains(goal['id'])) {
         double surplus = currentAmount - totalAmount; // Tính số tiền thừa
         _showCompletionDialog(goal['id'], surplus); // Hiển thị thông báo
       }
