@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../Login_SignUp/login_page.dart';
+import '../../check_login.dart';
+import '../../userID_Store.dart';
 import 'change_password_page.dart';
 import 'about_page.dart';
 
@@ -12,7 +16,10 @@ class OverviewSetReminder extends StatelessWidget {
       home: Scaffold(
         backgroundColor: const Color(0xFFedeff1),
         appBar: AppBar(
-          title: const Text('Cài đặt'),
+          title: const Text(
+            'Cài đặt',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           backgroundColor: Colors.white,
         ),
         body: ListView(
@@ -35,7 +42,7 @@ class OverviewSetReminder extends StatelessWidget {
                 leading: const Icon(Icons.lock, color: Colors.black),
                 title: const Text(
                   'Đổi mật khẩu',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 18, ),
                 ),
                 onTap: () {
                   Navigator.push(
@@ -63,10 +70,18 @@ class OverviewSetReminder extends StatelessWidget {
                 leading: const Icon(Icons.logout, color: Colors.black),
                 title: const Text(
                   'Đăng xuất',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 18, ),
                 ),
                 onTap: () {
-                  Navigator.pop(context);
+                  FirebaseAuth.instance.signOut();
+                  UserStorage.userId = "";
+                  isLogined = false;
+
+                  // Navigate back to the login page after signing out
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    (route) => false,
+                  );
                 },
               ),
             ),
@@ -98,7 +113,8 @@ class OverviewSetReminder extends StatelessWidget {
                     leading: const Icon(Icons.info, color: Colors.black),
                     title: const Text(
                       'Giới thiệu',
-                      style: TextStyle(fontSize: 18),
+                      style:
+                          TextStyle(fontSize: 18,),
                     ),
                     onTap: () {
                       Navigator.push(
