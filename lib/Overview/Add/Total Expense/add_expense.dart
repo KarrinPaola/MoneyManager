@@ -23,7 +23,7 @@ class _AddExpenseState extends State<AddExpense> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   var update = false;
-  final Service _service = Service(); 
+  final Service _service = Service();
 
   void backToTotalExpense() {
     Navigator.pop(context, update);
@@ -242,8 +242,9 @@ class _AddExpenseState extends State<AddExpense> {
                               });
                             },
                             onDelete: () {
-                              _service.deleteTag(UserStorage.userId, tags[index], 'tagOutcome');
-                              _reloadTags(); 
+                              _service.deleteTag(UserStorage.userId,
+                                  tags[index], 'tagOutcome');
+                              _reloadTags();
                             },
                           );
                         }),
@@ -272,9 +273,8 @@ class _AddExpenseState extends State<AddExpense> {
                 // Validate inputs
                 if (titleController.text.isNotEmpty &&
                     moneyController.text.isNotEmpty &&
-                    _selectedTagIndex != -1 &&
                     UserStorage.userId != null) {
-                  // Kiểm tra xem userId có null hay không
+                  // Bỏ kiểm tra _selectedTagIndex
 
                   // Parse money to double, loại bỏ dấu phẩy và dấu chấm
                   double money = double.tryParse(moneyController.text
@@ -282,12 +282,16 @@ class _AddExpenseState extends State<AddExpense> {
                           .replaceAll(',', '')) ??
                       0.0;
 
+                  // Kiểm tra tagNameSelected, nếu không có tag thì gán mặc định là "Khác"
+                  String finalTag =
+                      tagNameSelected.isNotEmpty ? tagNameSelected : "Khác";
+
                   // Call Process_Add_In_Out with all necessary data
                   Process_Add_In_Out(
                     UserStorage.userId!,
                     titleController.text,
                     money,
-                    tagNameSelected,
+                    finalTag,
                     _selectedDay ?? DateTime.now(),
                     'outcome',
                   );
@@ -329,7 +333,8 @@ class _AddExpenseState extends State<AddExpense> {
                 } else {
                   // Handle validation error (e.g., show a Snackbar)
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Hãy nhập đầy đủ các thông tin!')),
+                    const SnackBar(
+                        content: Text('Hãy nhập đầy đủ các thông tin!')),
                   );
                 }
               },
@@ -340,7 +345,7 @@ class _AddExpenseState extends State<AddExpense> {
                     borderRadius: BorderRadius.circular(50),
                     color: const Color(0xFF1e42f9)),
                 child: const Text(
-                  "Confirm",
+                  "Xác nhận",
                   style: TextStyle(
                     color: Color(0xffffffff),
                     fontWeight: FontWeight.bold,
