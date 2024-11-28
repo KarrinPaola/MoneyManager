@@ -7,7 +7,7 @@ import 'Add/Total Income/add_income.dart';
 import 'Home/home.dart';
 import 'Notification/notification.dart';
 import 'Saving/screen/screens/savings_home_screen.dart';
-import 'Set Reminder/ser_reminder.dart';
+import 'Setting/Settings_page.dart';
 import 'button_add.dart';
 
 class MyOverview extends StatefulWidget {
@@ -32,6 +32,29 @@ class _MyOverviewState extends State<MyOverview> {
     setState(() {
       _selectedTab = index;
     });
+  }
+
+  void goToAddIncome() async {
+    final update = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddIncome()),
+    );
+    if (update == true) {
+      print("Đã nhận được tín hiệu");
+
+      // Gọi lại các phương thức để cập nhật lại dữ liệu thu nhập
+    }
+  }
+
+  void goToAddExpense() async {
+    final update = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddExpense()),
+    );
+    if (update == true) {
+      print("Đã nhận được tín hiệu");
+      // Gọi lại các phương thức để cập nhật lại dữ liệu thu nhập
+    }
   }
 
   @override
@@ -123,7 +146,6 @@ class _MyOverviewState extends State<MyOverview> {
         if (_isMenuVisible)
           GestureDetector(
             onTap: () {
-
               setState(() {
                 _isMenuVisible = false;
                 _selectedTab = 0; // Ẩn menu khi bấm ra ngoài
@@ -142,23 +164,13 @@ class _MyOverviewState extends State<MyOverview> {
                       MainAxisAlignment.end, // Để các button ở giữa màn hình
                   children: [
                     ButtonAdd(
-                        title: "Add Income",
-                        ontap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const AddIncome()),
-                          );
-                        }),
+                      title: "Thêm ngân sách",
+                      ontap: goToAddIncome,
+                    ),
                     ButtonAdd(
-                        title: "Add Expense",
-                        ontap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const AddExpense()),
-                          );
-                        }),
+                      title: "Thêm chi phí",
+                      ontap: goToAddExpense,
+                    ),
                     const SizedBox(
                       height: 150,
                     )

@@ -203,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               LoginWith(
                 onTap: () async {
-                  await loginWithGG(); // Gọi loginWithGG
+                  await loginWithGG(context); // Gọi loginWithGG
                 },
                 imagePath: 'lib/Login_SignUp/Images/google.png',
                 brand: 'GOOGLE',
@@ -213,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               LoginWith(
                 onTap: () async {
-                  await loginWithGG(); // Gọi loginWithGG
+                  await loginWithGG(context); // Gọi loginWithGG
                 },
                 imagePath: 'lib/Login_SignUp/Images/apple-logo.png',
                 brand: 'APPLE',

@@ -66,12 +66,15 @@ class ItemWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (title != null && title!.isNotEmpty)
-                      Text(
-                        title!,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                        softWrap: true,
-                        overflow: TextOverflow.visible,
-                      ),
+                      if (title != null && title!.isNotEmpty)
+                        Text(
+                          title!.length > 30
+                              ? '${title!.substring(0, 20)}...' // Lấy 20 ký tự đầu và thêm "..."
+                              : title!,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          softWrap: true,
+                          overflow: TextOverflow.visible,
+                        ),
                     if (date != null && date!.isNotEmpty)
                       Text(
                         date!,

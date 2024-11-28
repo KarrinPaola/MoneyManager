@@ -41,8 +41,9 @@ class ButtonAdd extends StatelessWidget {
               style: const TextStyle(
                   color: Color(0xffffffff),
                   fontSize: 15,
-                  fontWeight: FontWeight.w900),
-                  
+                  fontWeight: FontWeight.w900,
+                  decoration: TextDecoration.none,
+                  ),
             ),
           ],
         ),

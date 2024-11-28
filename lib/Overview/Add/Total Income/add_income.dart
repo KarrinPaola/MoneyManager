@@ -22,7 +22,7 @@ class _AddIncomeState extends State<AddIncome> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   var update = false;
-  final Service _service = Service(); 
+  final Service _service = Service();
 
   void backToTotalIncome() {
     Navigator.pop(context, update);
@@ -250,7 +250,8 @@ class _AddIncomeState extends State<AddIncome> {
                               });
                             },
                             onDelete: () {
-                              _service.deleteTag(UserStorage.userId, tags[index], 'tagIncome');
+                              _service.deleteTag(
+                                  UserStorage.userId, tags[index], 'tagIncome');
                               _reloadTags();
                             },
                           );
@@ -280,9 +281,8 @@ class _AddIncomeState extends State<AddIncome> {
                 // Validate inputs
                 if (titleController.text.isNotEmpty &&
                     moneyController.text.isNotEmpty &&
-                    _selectedTagIndex != -1 &&
                     UserStorage.userId != null) {
-                  // Kiểm tra xem userId có null hay không
+                  // Bỏ kiểm tra _selectedTagIndex
 
                   // Parse money to double, loại bỏ dấu phẩy và dấu chấm
                   double money = double.tryParse(moneyController.text
@@ -290,12 +290,16 @@ class _AddIncomeState extends State<AddIncome> {
                           .replaceAll(',', '')) ??
                       0.0;
 
+                  // Kiểm tra tagNameSelected, nếu không có tag thì gán mặc định là "Khác"
+                  String finalTag =
+                      tagNameSelected.isNotEmpty ? tagNameSelected : "Khác";
+
                   // Call Process_Add_In_Out with all necessary data
                   Process_Add_In_Out(
                     UserStorage.userId!,
                     titleController.text,
                     money,
-                    tagNameSelected,
+                    finalTag,
                     _selectedDay ?? DateTime.now(),
                     'income',
                   );
