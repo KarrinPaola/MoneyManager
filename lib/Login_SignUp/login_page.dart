@@ -60,6 +60,8 @@ class _LoginPageState extends State<LoginPage> {
 
       // Đóng hộp thoại tải lên
       Navigator.pop(context);
+      usernameController.text = "";
+      passwordController.text = "";
       Navigator.push(context, MaterialPageRoute(builder: (context) => const MyOverview()),);
 
     } on FirebaseAuthException catch (e) {
@@ -201,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               LoginWith(
                 onTap: () async {
-                  await loginWithGG(); // Gọi loginWithGG
+                  await loginWithGG(context); // Gọi loginWithGG
                 },
                 imagePath: 'lib/Login_SignUp/Images/google.png',
                 brand: 'GOOGLE',
@@ -211,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               LoginWith(
                 onTap: () async {
-                  await loginWithGG(); // Gọi loginWithGG
+                  await loginWithGG(context); // Gọi loginWithGG
                 },
                 imagePath: 'lib/Login_SignUp/Images/apple-logo.png',
                 brand: 'APPLE',
