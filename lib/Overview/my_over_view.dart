@@ -7,7 +7,7 @@ import 'Add/Total Income/add_income.dart';
 import 'Home/home.dart';
 import 'Notification/notification.dart';
 import 'Saving/screen/screens/savings_home_screen.dart';
-import 'Set Reminder/ser_reminder.dart';
+import 'Setting/Settings_page.dart';
 import 'button_add.dart';
 
 class MyOverview extends StatefulWidget {
