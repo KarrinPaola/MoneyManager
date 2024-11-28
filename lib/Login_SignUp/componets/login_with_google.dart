@@ -1,10 +1,12 @@
+import 'package:back_up/Overview/my_over_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 import 'create_database_for_new_user.dart';
 
-Future<void> loginWithGG() async {
+
+Future<void> loginWithGG(BuildContext context) async {
   // Bắt đầu quá trình đăng nhập bằng Google
   final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
 
@@ -39,4 +41,8 @@ Future<void> loginWithGG() async {
     // Nếu người dùng chưa tồn tại, tạo cơ sở dữ liệu cho người dùng
     await createUserDatabase(userId, userEmail);
   }
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const MyOverview()),
+  );
 }

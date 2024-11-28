@@ -141,16 +141,20 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(
                 height: 15,
               ),
-              const LoginWith(
-                onTap: loginWithGG,
+              LoginWith(
+                onTap: () async {
+                  await loginWithGG(context); // Gọi loginWithGG
+                },
                 imagePath: 'lib/Login_SignUp/Images/google.png',
                 brand: 'GOOGLE',
               ),
               const SizedBox(
                 height: 15,
               ),
-              const LoginWith(
-                onTap: loginWithGG,
+              LoginWith(
+                onTap: () async {
+                  await loginWithGG(context); // Gọi loginWithGG
+                },
                 imagePath: 'lib/Login_SignUp/Images/apple-logo.png',
                 brand: 'APPLE',
               ),
