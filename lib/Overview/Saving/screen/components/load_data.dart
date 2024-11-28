@@ -100,6 +100,8 @@ class SavingService {
       isDeleting = false;
     }
   }
+
+  addMoneyToGoal(String goalId, double surplusAmount) {}
 }
 
 // Method to handle deletion and update the UI

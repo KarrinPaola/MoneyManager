@@ -51,21 +51,20 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
   }
 
   Future<void> _loadIgnoredGoals() async {
-  String? userId = UserStorage.userId;
-  List<Map<String, dynamic>> goals =
-      await firestoreService.getIgnoredGoalsWithAmounts(userId!);
+    String? userId = UserStorage.userId;
+    List<Map<String, dynamic>> goals =
+        await firestoreService.getIgnoredGoalsWithAmounts(userId!);
 
-  print("Dữ liệu ignored_goals tải về: $goals");
+    print("Dữ liệu ignored_goals tải về: $goals");
 
-  setState(() {
-    ignoredGoalIds = goals.map((goal) => goal['id'].toString()).toSet();
-    ignoredGoalAmounts = {
-      for (var goal in goals)
-        goal['id'].toString(): goal['currentAmount'] as double
-    };
-  });
-}
-
+    setState(() {
+      ignoredGoalIds = goals.map((goal) => goal['id'].toString()).toSet();
+      ignoredGoalAmounts = {
+        for (var goal in goals)
+          goal['id'].toString(): goal['currentAmount'] as double
+      };
+    });
+  }
 
   Future<void> _saveIgnoredGoal(String goalId, double currentAmount) async {
     String? userId = UserStorage.userId;
@@ -209,6 +208,114 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
     );
   }
 
+// Hiển thị Popup với danh sách sắp xếp
+  void _showListDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text(
+            'Mục tiêu tiết kiệm',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Divider(),
+                const Text(
+                  'Danh sách mục tiêu:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                // Danh sách mục tiêu
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(5),
+                    itemCount: savingsList.length,
+                    itemBuilder: (context, index) {
+                      final goal = savingsList[index];
+                      return GestureDetector(
+                        onLongPress: () {
+                          // Hiển thị dialog khi ấn giữ
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Options'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ListTile(
+                                      leading: const Icon(Icons.edit),
+                                      title: const Text('Chỉnh sửa'),
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        bool? update = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                AddMoneyScreen(goal: goal),
+                                          ),
+                                        );
+                                        if (update == true) {
+                                          _loadDataTotalAmount();
+                                          _loadDataCurrentAmount();
+                                          _loadDataSavingList();
+                                        }
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(Icons.delete),
+                                      title: const Text('Xoá'),
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        _deleteSaving(goal['id']);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: SizedBox(
+                          height: 100, // Thu nhỏ chiều cao của container
+                          child: Container(
+                            margin: const EdgeInsets.only(
+                                bottom: 3), // Khoảng cách giữa các container
+                            padding: const EdgeInsets.all(
+                                5), // Padding nhỏ hơn để các mục tiêu gần nhau
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              // Loại bỏ viền và shadow
+                            ),
+                            child: GoalItem(
+                                goal: goal), // Hiển thị mục tiêu tiết kiệm
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Đóng'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -218,7 +325,7 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
         forceMaterialTransparency: true,
         title: const Center(
           child: Text(
-            'Savings',
+            'Tiết Kiệm',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -291,14 +398,18 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color(0xFF9ba1a8),
+                              color: Colors.white,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(
-                            Icons.more_horiz,
-                            size: 35,
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.more_horiz,
+                              size: 35,
+                            ),
+                            onPressed:
+                                _showListDialog, // Gọi hàm hiển thị popup
                           ),
                         )
                       ],
