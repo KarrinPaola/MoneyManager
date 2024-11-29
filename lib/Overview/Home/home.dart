@@ -130,17 +130,17 @@ class _OverviewHomeState extends State<OverviewHome> {
   }
 
   // Xử lý sign - out
-  void signUserOut(BuildContext context) {
-    FirebaseAuth.instance.signOut();
-    UserStorage.userId = "";
-    isLogined = false;
+  // void signUserOut(BuildContext context) {
+  //   FirebaseAuth.instance.signOut();
+  //   UserStorage.userId = "";
+  //   isLogined = false;
 
-    // Navigate back to the login page after signing out
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-      (route) => false,
-    );
-  }
+  //   // Navigate back to the login page after signing out
+  //   Navigator.of(context).pushAndRemoveUntil(
+  //     MaterialPageRoute(builder: (context) => const LoginPage()),
+  //     (route) => false,
+  //   );
+  // }
 
   void goToTotalExpense() async {
     print("Navigating to Total Expense");
@@ -196,12 +196,6 @@ class _OverviewHomeState extends State<OverviewHome> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      signUserOut(context);
-                    },
-                    child: const Icon(Icons.logout),
-                  )
                 ],
               ),
             ),

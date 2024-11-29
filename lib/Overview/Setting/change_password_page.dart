@@ -1,42 +1,120 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../Login_SignUp/componets/my_button.dart';
+import '../../Login_SignUp/componets/my_textField.dart';
+
 class ChangePasswordPage extends StatefulWidget {
+  const ChangePasswordPage({Key? key}) : super(key: key);
+
   @override
   _ChangePasswordPageState createState() => _ChangePasswordPageState();
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
-  final TextEditingController oldPasswordController = TextEditingController();
-  final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  // Text editing controllers
+  final oldPasswordController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  void _handleChangePassword() {
-    final newPassword = newPasswordController.text.trim();
-    final confirmPassword = confirmPasswordController.text.trim();
+  bool stateChangePassword = true;
 
-    if (newPassword.length < 6) {
-      _showMessage('Mật khẩu mới phải có ít nhất 6 ký tự');
-    } else if (newPassword != confirmPassword) {
-      _showMessage('Mật khẩu xác nhận không khớp');
-    } else {
-      _showMessage('Đổi mật khẩu thành công');
-      // Thêm logic đổi mật khẩu tại đây
+  // Function to change password
+  void changePassword() async {
+    // Hiển thị hộp thoại tải lên
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    try {
+      if (user == null) {
+        Navigator.pop(context); // Đóng hộp thoại tải lên
+        _showError('Người dùng không tìm thấy');
+        return;
+      }
+
+      // Đăng nhập lại người dùng với mật khẩu cũ
+      await user.reauthenticateWithCredential(
+        EmailAuthProvider.credential(
+          email: user.email!,
+          password: oldPasswordController.text.trim(),
+        ),
+      );
+
+      // Kiểm tra mật khẩu mới và mật khẩu xác nhận
+      final newPassword = newPasswordController.text.trim();
+      final confirmPassword = confirmPasswordController.text.trim();
+
+      if (newPassword != confirmPassword) {
+        Navigator.pop(context);
+        _showError('Mật khẩu xác nhận không khớp');
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        Navigator.pop(context);
+        _showError('Mật khẩu mới phải có ít nhất 6 ký tự');
+        return;
+      }
+
+      // Thay đổi mật khẩu
+      await user.updatePassword(newPassword);
+
+      // Cập nhật trạng thái thành công
+      Navigator.pop(context); // Đóng hộp thoại tải lên
+      _showSuccess('Đổi mật khẩu thành công');
+      oldPasswordController.clear();
+      newPasswordController.clear();
+      confirmPasswordController.clear();
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context); // Đóng hộp thoại tải lên
+      _showError(e.message ?? 'Lỗi khi thay đổi mật khẩu');
     }
   }
 
-  void _showMessage(String message) {
+  // Function to show success message
+  void _showSuccess(String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          title: const Text('Thành công'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Function to show error message
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Lỗi'),
           content: Text(message),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -47,39 +125,67 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFFFFFF),
       appBar: AppBar(
-        title: Text('Đổi mật khẩu'),
         backgroundColor: Colors.white,
+        title: Text(
+          'Đổi mật khẩu',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
-      body: Container(
-        color: Color(0xFFedeff1),
-        padding: const EdgeInsets.all(16.0),
+      body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            TextField(
-              controller: oldPasswordController,
-              decoration: InputDecoration(labelText: 'Mật khẩu cũ'),
-              obscureText: true,
-            ),
-            TextField(
-              controller: newPasswordController,
-              decoration: InputDecoration(labelText: 'Mật khẩu mới'),
-              obscureText: true,
-            ),
-            TextField(
-              controller: confirmPasswordController,
-              decoration: InputDecoration(labelText: 'Xác nhận mật khẩu'),
-              obscureText: true,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _handleChangePassword,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF2144FA),
-                foregroundColor: Colors.white,
+            if (!stateChangePassword)
+              Container(
+                padding: const EdgeInsets.all(10),
+                margin: const EdgeInsets.symmetric(horizontal: 25),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: const Color(0xFFFFD8D7),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error, color: Color(0xFFB00020)),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        "Đổi mật khẩu thất bại",
+                        style: TextStyle(color: Color(0xFFB00020)),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Text('Xác nhận'),
+            const SizedBox(height: 20),
+            MyTextField(
+              controller: oldPasswordController,
+              hintText: 'Mật khẩu cũ',
+              obscureText: true,
+              prefixIcon: Icons.password,
+            ),
+            const SizedBox(height: 20),
+            MyTextField(
+              controller: newPasswordController,
+              hintText: 'Mật khẩu mới',
+              obscureText: true,
+              prefixIcon: Icons.password,
+            ),
+            const SizedBox(height: 20),
+            MyTextField(
+              controller: confirmPasswordController,
+              hintText: 'Xác nhận mật khẩu',
+              obscureText: true,
+              prefixIcon: Icons.password,
+            ),
+            const SizedBox(height: 20),
+            MyButton(
+              onTap: changePassword,
+              text: "ĐỔI MẬT KHẨU",
             ),
           ],
         ),
