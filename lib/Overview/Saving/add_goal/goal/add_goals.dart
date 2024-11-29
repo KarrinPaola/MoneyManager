@@ -81,8 +81,9 @@ class _AddGoalsState extends State<AddGoals> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Goal Added"),
-        content: const Text("Your goal has been successfully added."),
+        title: const Text("Mục tiêu đã hoàn tất"),
+        content: const Text("Mục tiêu của bạn đã được thêm."),
+        backgroundColor: Colors.white,
         actions: [
           // Nút tiếp tục thêm mới
           TextButton(
@@ -96,7 +97,7 @@ class _AddGoalsState extends State<AddGoals> {
                 selectedDay = DateTime.now(); // Reset deadline
               });
             },
-            child: const Text("Add Another"),
+            child: const Text("Thêm mục tiêu"),
           ),
           // Nút quay lại màn hình trước
           TextButton(
@@ -104,7 +105,7 @@ class _AddGoalsState extends State<AddGoals> {
               Navigator.pop(context); // Đóng dialog
               Navigator.pop(context, update); // Quay lại màn hình trước
             },
-            child: const Text("Go Back"),
+            child: const Text("Trở lại"),
           ),
         ],
       ),
@@ -126,7 +127,7 @@ class _AddGoalsState extends State<AddGoals> {
           },
         ),
         title: const Text(
-          'Add Goal',
+          'Nhập mục tiêu',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -140,8 +141,8 @@ class _AddGoalsState extends State<AddGoals> {
           children: [
             // Goal Title Text Field
             Textfields(
-              Title: 'Goal Title',
-              hintText: 'Enter your goal',
+              Title: 'Mục tiêu',
+              hintText: 'Nhập mục tiêu của bạn',
               isType: true,
               onlyNumber: false,
               controller: goalTitleController,
@@ -150,12 +151,11 @@ class _AddGoalsState extends State<AddGoals> {
 
             // Amount Text Field
             Textfields(
-              Title: 'Amount',
-              hintText: 'Enter amount',
+              Title: 'Số tiền mục tiêu',
+              hintText: 'Nhập số tiền mục tiêu',
               isType: true,
               onlyNumber: true,
               controller: amountController,
-              iconData: Icons.attach_money,
             ),
             const SizedBox(height: 10),
 
@@ -183,7 +183,7 @@ class _AddGoalsState extends State<AddGoals> {
                 minimumSize: const Size(double.infinity, 50),
               ),
               child: const Text(
-                'ADD GOAL',
+                'Xác nhận',
                 style: TextStyle(
                   color: Colors.white,
                 ),

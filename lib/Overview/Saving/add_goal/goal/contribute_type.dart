@@ -22,7 +22,7 @@ class _ContributionTypeFieldState extends State<ContributionTypeField> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Contribution Type',
+            'Kiểu đóng góp',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Color.fromARGB(255, 153, 172, 193),
@@ -48,7 +48,7 @@ class _ContributionTypeFieldState extends State<ContributionTypeField> {
                     borderRadius: BorderRadius.circular(15),
                     borderSide: const BorderSide(color: Colors.grey),
                   ),
-                  hintText: _contributionType.contributionType ?? "Select Type",
+                  hintText: _contributionType.contributionType ?? "Chọn kiểu",
                   suffixIcon: const Icon(
                     Icons.arrow_drop_down,
                     color: Color(0xFF9ba1a8),

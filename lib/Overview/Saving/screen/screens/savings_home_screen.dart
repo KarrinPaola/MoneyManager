@@ -28,9 +28,7 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
   void initState() {
     super.initState();
     _loadIgnoredGoals(); // Tải ignored_goals từ Firestore
-    _loadDataTotalAmount(); // Tải tổng số tiền
-    _loadDataCurrentAmount(); // Tải số tiền hiện tại
-    _loadDataSavingList(); // Tải danh sách mục tiêu
+    _loadAllData(); // Tải danh sách mục tiêu
   }
 
   // Hàm hiển thị thông báo khi mục tiêu đã hoàn thành
@@ -72,36 +70,31 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
         userId!, goalId, currentAmount);
   }
 
-  // Hàm tải dữ liệu tổng số tiền
-  Future<void> _loadDataTotalAmount() async {
+  Future<void> _loadAllData() async {
     String? userId = UserStorage.userId;
-    double temp = await savingService.getTotalAmount(userId!);
-    setState(() {
-      totalAmountSum = temp;
-    });
-  }
 
-  // Hàm tải dữ liệu số tiền đã tiết kiệm
-  Future<void> _loadDataCurrentAmount() async {
-    String? userId = UserStorage.userId;
-    double temp = await savingService.getTotalCurrentAmount(userId!);
-    setState(() {
-      currentAmountSum = temp;
-    });
-  }
+    // Tải tổng số tiền đã tiết kiệm
+    double totalAmount = await savingService.getTotalAmount(userId!);
 
-  // Hàm tải danh sách các mục tiêu tiết kiệm
-  Future<void> _loadDataSavingList() async {
-    String? userId = UserStorage.userId;
-    List<Map<String, dynamic>> temp =
-        await savingService.getAllSavings(userId!);
+    // Tải số tiền hiện tại
+    double currentAmount = await savingService.getTotalCurrentAmount(userId);
+
+    // Tải danh sách các mục tiêu tiết kiệm
+    List<Map<String, dynamic>> savingsListData =
+        await savingService.getAllSavings(userId);
+
+    // Cập nhật UI
     setState(() {
-      savingsList = temp;
+      totalAmountSum = totalAmount;
+      currentAmountSum = currentAmount;
+      savingsList = savingsListData;
     });
 
-    // Kiểm tra xem có mục tiêu nào cần hiển thị alert không
+    // Kiểm tra và hiển thị alert nếu cần
     _checkForAlertDialog();
   }
+
+  // Hàm tải dữ liệu tổng số tiền
 
   void _checkForAlertDialog() {
     for (var goal in savingsList) {
@@ -118,59 +111,79 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
   }
 
   void _showAmountExceedDialog(String goalId, double currentAmount) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Số tiền đã vượt quá mục tiêu'),
-          content: const Text('Bạn có muốn hủy hoặc chuyển tiền?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {
-                  ignoredGoalIds.add(goalId);
-                  ignoredGoalAmounts[goalId] = currentAmount;
-                });
-                _saveIgnoredGoal(goalId, currentAmount);
-              },
-              child: const Text('Hủy'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Logic chuyển tiền
-              },
-              child: const Text('Chuyển tiền'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+    double? tienThua; // Biến lưu trữ số tiền thừa tạm thời
+    double? totalAmount;
 
-  void checkForAlertDialog() {
+    // Tìm tổng tiền của mục tiêu tương ứng
     for (var goal in savingsList) {
-      // Kiểm tra nếu 'currentAmount' và 'totalAmount' không phải null và chuyển thành double nếu cần
-      double currentAmount =
-          (goal['currentAmount'] != null && goal['currentAmount'] is num)
-              ? (goal['currentAmount'] is double
-                  ? goal['currentAmount']
-                  : (goal['currentAmount'] as num).toDouble())
-              : 0.0; // Default to 0.0 if invalid
-
-      double totalAmount =
-          (goal['totalAmount'] != null && goal['totalAmount'] is num)
-              ? (goal['totalAmount'] is double
-                  ? goal['totalAmount']
-                  : (goal['totalAmount'] as num).toDouble())
-              : 0.0; // Default to 0.0 if invalid
-
-      // Kiểm tra nếu currentAmount lớn hơn totalAmount và mục tiêu chưa bị bỏ qua
-      if (currentAmount > totalAmount && !ignoredGoalIds.contains(goal['id'])) {
-        double surplus = currentAmount - totalAmount; // Tính số tiền thừa
-        _showCompletionDialog(goal['id'], surplus); // Hiển thị thông báo
+      if (goal['id'] == goalId) {
+        totalAmount = goal['totalAmount'] ?? 0.0;
+        break;
       }
+    }
+
+    if (totalAmount != null) {
+      tienThua = currentAmount - totalAmount;
+    }
+
+    // In ra giá trị để kiểm tra
+    print(
+        'currentAmount: $currentAmount, totalAmount: $totalAmount, tienThua: $tienThua');
+
+    if (tienThua != null && tienThua > 0) {
+      print('Số tiền thừa: $tienThua'); // In số tiền thừa ra debug console
+
+      showDialog(
+        context: context,
+        barrierDismissible:
+            false, // Không cho phép đóng dialog khi bấm ngoài vùng hiển thị
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: const Text('Số tiền đã vượt quá mục tiêu'),
+            content: Text(
+                'Số tiền thừa là: $tienThua.\nBạn có muốn hủy hoặc chuyển tiền?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Đóng dialog
+                  setState(() {
+                    ignoredGoalIds.add(goalId);
+                    ignoredGoalAmounts[goalId] = currentAmount;
+                  });
+                  _saveIgnoredGoal(goalId, currentAmount);
+                },
+                child: const Text('Hủy'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  // Lưu số tiền thừa vào Firestore khi chọn "Chuyển tiền"
+                  String? userId =
+                      UserStorage.userId; // Lấy User ID từ UserStorage
+                  List<Map<String, dynamic>> tienThuaList = [
+                    {'goalId': goalId, 'tienThua': tienThua}
+                  ];
+
+                  try {
+                    await firestoreService.setTienThua(userId!, tienThuaList);
+                    print('Lưu tiền thừa thành công!');
+                  } catch (e) {
+                    print('Lỗi khi lưu tiền thừa: $e');
+                  }
+
+                  Navigator.pop(context);
+                  // Đóng dialog
+
+                  _showTransferDialog();
+                },
+                child: const Text('Chuyển tiền'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      print('Không có tiền thừa hoặc không đạt điều kiện hiển thị');
     }
   }
 
@@ -178,9 +191,7 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
   Future<void> _deleteSaving(String id) async {
     try {
       await savingService.deleteSaving(id);
-      await _loadDataTotalAmount();
-      await _loadDataCurrentAmount();
-      await _loadDataSavingList();
+      await _loadAllData();
     } catch (e) {
       print('Lỗi khi xóa mục tiêu: $e');
       _showErrorDialog('Không thể xóa mục tiêu. Vui lòng thử lại.');
@@ -244,7 +255,7 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: const Text('Options'),
+                                backgroundColor: Colors.white,
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -261,9 +272,7 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
                                           ),
                                         );
                                         if (update == true) {
-                                          _loadDataTotalAmount();
-                                          _loadDataCurrentAmount();
-                                          _loadDataSavingList();
+                                          _loadAllData();
                                         }
                                       },
                                     ),
@@ -316,6 +325,68 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
     );
   }
 
+  void _showTransferDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text(
+            'Mục tiêu tiết kiệm',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Divider(),
+                const Text(
+                  'Danh sách mục tiêu:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                // Danh sách mục tiêu
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(5),
+                    itemCount: savingsList.length,
+                    itemBuilder: (context, index) {
+                      final goal = savingsList[index];
+                      return SizedBox(
+                        height: 100, // Thu nhỏ chiều cao của container
+                        child: Container(
+                          margin: const EdgeInsets.only(
+                              bottom: 3), // Khoảng cách giữa các container
+                          padding: const EdgeInsets.all(
+                              5), // Padding nhỏ hơn để các mục tiêu gần nhau
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            // Loại bỏ viền và shadow
+                          ),
+                          child: GoalItem(
+                              goal: goal), // Hiển thị mục tiêu tiết kiệm
+                        ),
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Đóng'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -344,9 +415,7 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
                 ),
               );
               if (update == true) {
-                _loadDataTotalAmount();
-                _loadDataCurrentAmount();
-                _loadDataSavingList();
+                _loadAllData();
               }
             },
           ),
@@ -427,7 +496,7 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: const Text('Options'),
+                                    backgroundColor: Colors.white,
                                     content: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -444,9 +513,7 @@ class _SavingsHomeScreenState extends State<SavingsHomeScreen> {
                                               ),
                                             );
                                             if (update == true) {
-                                              _loadDataTotalAmount();
-                                              _loadDataCurrentAmount();
-                                              _loadDataSavingList();
+                                              _loadAllData();
                                             }
                                           },
                                         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class GoalItem extends StatelessWidget {
   final Map<String, dynamic> goal;
@@ -7,7 +8,11 @@ class GoalItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Tính tiến độ
     double progress = goal['currentAmount'] / goal['totalAmount'];
+
+    // Định dạng số tiền
+    final currencyFormatter = NumberFormat('#,##0', 'vi_VN');
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -21,7 +26,9 @@ class GoalItem extends StatelessWidget {
                 Text(
                   goal['title'],
                   style: const TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.bold),
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 5),
                 // Thanh tiến độ
@@ -35,10 +42,50 @@ class GoalItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('\$${goal['currentAmount']}',
-                        style: TextStyle(color: Colors.grey.shade600)),
-                    Text('\$${goal['totalAmount']}',
-                        style: TextStyle(color: Colors.grey.shade600)),
+                    // Số tiền hiện tại
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '${currencyFormatter.format(goal['currentAmount'])} ',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'đ',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Số tiền mục tiêu
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '${currencyFormatter.format(goal['totalAmount'])} ',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'đ',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ],

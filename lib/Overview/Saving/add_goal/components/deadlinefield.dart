@@ -24,7 +24,7 @@ class _DeadlineFieldState extends State<DeadlineField> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Deadline',
+            'Ngày đến hạn',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Color.fromARGB(255, 153, 172, 193),
@@ -59,7 +59,7 @@ class _DeadlineFieldState extends State<DeadlineField> {
                   color: Color(0xFF9ba1a8),
                 ),
                 hintText: _deadlineLogic.selectedDate == null
-                    ? 'Chọn Deadline'
+                    ? 'Chọn ngày'
                     : DateFormat('dd/MM/yyyy').format(_deadlineLogic.selectedDate!),
               ),
             ),

@@ -97,6 +97,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
         title: const Text("Cập nhật thành công"),
         content: const Text("Mục tiêu của bạn đã được cập nhật thành công."),
         actions: [
