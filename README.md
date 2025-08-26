@@ -32,19 +32,6 @@
 </div>
 <br>
 
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
-    - [Usage](#usage)
-    - [Testing](#testing)
-
----
-
 ## Overview
 
 MoneyManager is a versatile developer toolset crafted to facilitate the development of cross-platform personal finance applications using Flutter. It integrates platform-specific configurations, plugin management, and UI components to streamline building robust, scalable finance apps.
